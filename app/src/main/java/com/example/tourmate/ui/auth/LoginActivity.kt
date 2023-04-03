@@ -1,9 +1,9 @@
-package com.example.tourmate.auth
+package com.example.tourmate.ui.auth
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.tourmate.MainActivity
+import com.example.tourmate.ui.MainActivity
 import com.example.tourmate.R
 import com.example.tourmate.databinding.ActivityLoginBinding
 import com.firebase.ui.auth.AuthUI
@@ -16,12 +16,9 @@ class LoginActivity : AppCompatActivity() {
         ActivityLoginBinding.inflate(layoutInflater)
     }
     private lateinit var auth: FirebaseAuth
-
-    //    private lateinit var googleSignInClient : GoogleSignInClient
     private val signInLauncher = registerForActivityResult(
         FirebaseAuthUIActivityResultContract()
     ) { result: FirebaseAuthUIAuthenticationResult ->
-
         if (result.resultCode == RESULT_OK) {
             //success
             openMainActivity()
