@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="@dimen/_150sdp"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_city"
+        android:layout_gravity="center_horizontal"
+        app:cornerRadius="8dp"
+        app:rippleColor="@color/light_blue"
+        app:backgroundTint="@color/light_blue"
+        app:strokeColor="@color/dark_blue"
+        app:strokeWidth="2dp"
+        />
+
+
+
+</LinearLayout>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/rounded_corners">
+
+    <TextView
+        android:id="@+id/text_view_location_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:text="@string/location_name"
+        android:textSize="@dimen/_25sdp" />
+
+    <TextView
+        android:id="@+id/text_view_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:text="@string/location"
+        android:textSize="@dimen/_15sdp" />
+
+    <LinearLayout
+        android:padding="@dimen/_5sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RatingBar
+            android:id="@+id/rating_bar_vote_average"
+            style="@android:style/Widget.Holo.RatingBar.Small"
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="wrap_content"
+            android:background="#ACA7A7"
+            android:foregroundTint="#3C3838"
+            android:indeterminate="false"
+            android:isIndicator="false"
+            android:numStars="5"
+            android:progressTint="#FDD835"
+            android:rating="0"
+            android:stepSize="0.1"
+            android:backgroundTint="#FFFFFF"
+            android:layout_marginRight="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:padding="@dimen/_5sdp"
+            android:outlineAmbientShadowColor="#000000"
+            android:outlineSpotShadowColor="#000000"
+            android:elevation="@dimen/_5sdp" />
+
+        <TextView
+            android:id="@+id/text_view_vote_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="#ACA7A7"
+            android:padding="@dimen/_5sdp"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:outlineAmbientShadowColor="#000000"
+            android:outlineSpotShadowColor="#000000"
+            android:elevation="@dimen/_5sdp" />
+    </LinearLayout>
+</LinearLayout>

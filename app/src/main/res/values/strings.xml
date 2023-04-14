@@ -14,4 +14,11 @@
     <string name="cafe">cafe</string>
     <string name="post_office">post office</string>
     <string name="shopping">shopping</string>
+    <string name="location_name">Name:</string>
+    <string name="location">Location</string>
+    <string name="recommend_other_location">Recommend Other Location</string>
+    <string name="back">Back</string>
+    <string name="continue_select">Select other location</string>
+    <string name="no_data_found">No Data found</string>
+    <string name="t_n_t_nh_th_nh_ph">Tên tỉnh/thành phố</string>
 </resources>

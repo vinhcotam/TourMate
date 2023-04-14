@@ -1,9 +1,8 @@
-package com.example.tourmate.ui.auth
+package com.example.tourmate.controller
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.tourmate.ui.MainActivity
 import com.example.tourmate.R
 import com.example.tourmate.databinding.ActivityLoginBinding
 import com.firebase.ui.auth.AuthUI
