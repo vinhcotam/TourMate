@@ -6,7 +6,6 @@
     android:layout_marginBottom="@dimen/_5sdp"
     android:background="@drawable/border_layout"
     android:orientation="horizontal"
-    android:layout_margin="@dimen/_5sdp"
     android:padding="@dimen/_5sdp">
 
     <ImageView
@@ -29,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_5sdp"
             android:text="@string/location_name"
-            android:textSize="@dimen/_12sdp" />
+            android:textSize="@dimen/_15sdp" />
 
         <TextView
             android:id="@+id/text_view_location"
@@ -37,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:text="@string/location"
-            android:textSize="@dimen/_8sdp" />
+            android:textSize="@dimen/_10sdp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -79,6 +78,18 @@
                 android:layout_marginBottom="@dimen/_5sdp"
                 android:elevation="@dimen/_5sdp"
                 android:padding="@dimen/_5sdp" />
+
+            <ImageView
+                android:id="@+id/image_view_delete"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_gravity="end"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:padding="@dimen/_5sdp"
+                android:src="@drawable/ic_delete" />
+
         </LinearLayout>
+
     </LinearLayout>
+
 </LinearLayout>

@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.tourmate"
-        minSdk 21
+        minSdk 26
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -55,17 +55,21 @@ dependencies {
     implementation 'com.intuit.ssp:ssp-android:1.0.6'
     // Import the BoM for the Firebase platform
     implementation platform('com.google.firebase:firebase-bom:31.2.0')
-
     // Add the dependency for the Firebase Authentication library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-moshi:2.6.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-    //volley
-    implementation 'com.android.volley:volley:1.2.1'
+    //glide
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    // Material Dialogs
+    implementation 'com.afollestad.material-dialogs:core:3.3.0'
+
+
+
+
 
 
 }

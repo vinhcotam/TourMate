@@ -6,19 +6,27 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.tourmate.R
-import com.example.tourmate.controller.interfaces.RecyclerLocation0nClickListener
-import com.example.tourmate.databinding.ItemDataLocationBinding
-import com.example.tourmate.model.DataLocation
+import com.example.tourmate.controller.interfaces.RecyclerFavoriteOnClickListener
+import com.example.tourmate.controller.interfaces.RecyclerSavedPlaceOnClickListener
+import com.example.tourmate.databinding.ItemSavedPlaceBinding
+import com.example.tourmate.model.ViewSavedPlace
 
-class DataLocationAdapter(private val context: Context, private var items: List<DataLocation>) :
-    RecyclerView.Adapter<DataLocationAdapter.ViewHolder>() {
-    private var mListener: RecyclerLocation0nClickListener? = null
-    class ViewHolder(private val binding: ItemDataLocationBinding) :
+class ViewSavedPlaceAdapter(
+    private val context: Context,
+    private var items: List<ViewSavedPlace>
+) : RecyclerView.Adapter<ViewSavedPlaceAdapter.ViewHolder>() {
+    private var mListener: RecyclerSavedPlaceOnClickListener? = null
+
+    class ViewHolder(private val binding: ItemSavedPlaceBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: DataLocation, context:Context, listener: RecyclerLocation0nClickListener?) {
+        fun bind(
+            item: ViewSavedPlace,
+            context: Context,
+            listener: RecyclerSavedPlaceOnClickListener?
+        ) {
             val name = item.english_name
-            val voteCount = "("+item.vote_count+")"
+            val voteCount = "(" + item.vote_count + ")"
             val location = item.location
             binding.textViewLocationName.text = name
             binding.textViewLocation.text = location
@@ -29,33 +37,36 @@ class DataLocationAdapter(private val context: Context, private var items: List<
                 .centerCrop()
                 .placeholder(R.drawable.logo)
                 .into(binding.imgLocation)
-            binding.imgLocation.setOnClickListener{
+            binding.imgLocation.setOnClickListener {
                 listener?.onItemClick(item)
-
+            }
+            binding.imageViewDelete.setOnClickListener {
+                listener?.onDeleteItemClick(item)
             }
         }
     }
-    fun setOnItemClickListener(listener: RecyclerLocation0nClickListener?) {
+
+    fun setOnItemClickListener(listener: RecyclerSavedPlaceOnClickListener?) {
         mListener = listener
     }
-    fun setFilteredList(items: List<DataLocation>){
+
+    fun setFilteredList(items: List<ViewSavedPlace>) {
         this.items = items
         notifyDataSetChanged()
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(context)
-        val binding = ItemDataLocationBinding.inflate(inflater, parent, false)
+        val binding = ItemSavedPlaceBinding.inflate(inflater, parent, false)
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        holder.bind(item,context, mListener)
+        holder.bind(item, context, mListener)
     }
 
     override fun getItemCount(): Int {
         return items.size
     }
-
-
 }

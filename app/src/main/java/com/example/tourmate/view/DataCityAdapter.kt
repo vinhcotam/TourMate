@@ -3,7 +3,7 @@ package com.example.tourmate.view
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tourmate.controller.RecyclerCity0nClickListener
+import com.example.tourmate.controller.interfaces.RecyclerCity0nClickListener
 import com.example.tourmate.databinding.ItemDataCityBinding
 import com.example.tourmate.model.DataCity
 
@@ -15,7 +15,7 @@ class DataCityAdapter(private var items: List<DataCity>) :
     class ViewHolder(private val binding: ItemDataCityBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: DataCity, listener: RecyclerCity0nClickListener?) {
-            binding.buttonCity.text = item.city_name
+            binding.buttonCity.text = item.english_name
             binding.buttonCity.setOnClickListener {
                 listener?.onItemClick(item)
             }

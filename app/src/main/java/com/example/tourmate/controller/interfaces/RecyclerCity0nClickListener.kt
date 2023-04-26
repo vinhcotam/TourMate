@@ -1,4 +1,4 @@
-package com.example.tourmate.controller
+package com.example.tourmate.controller.interfaces
 
 import com.example.tourmate.model.DataCity
 

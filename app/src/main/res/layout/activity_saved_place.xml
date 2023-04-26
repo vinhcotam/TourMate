@@ -6,12 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".controller.DataLocationActivity"
+    tools:context=".controller.SavedPlaceActivity"
     tools:openDrawer="start">
 
     <LinearLayout
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -24,42 +25,44 @@
                 android:layout_width="wrap_content"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/light_blue"
-                android:theme="@style/ThemeOverlay.AppCompat.Light">
+                android:theme="@style/ThemeOverlay.AppCompat.Light"
+                app:titleTextColor="@color/white">
 
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <LinearLayout
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:background="@drawable/searchview_background"
+            android:iconifiedByDefault="false"
+            android:queryHint="Search..."
+            android:typeface="sans" />
 
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/search_view_location"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/searchview_background"
-                android:iconifiedByDefault="false"
-                android:queryHint="Search..."
-                android:typeface="sans" />
+        <TextView
+            android:id="@+id/text_view_empty_notice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/no_data_found"
+            android:visibility="invisible" />
 
-            <TextView
-                android:id="@+id/text_view_empty_notice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/no_data_found"
-                android:visibility="invisible" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycleView_DataLocation"
+                android:id="@+id/recycleViewSavedPlace"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/_5sdp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@+id/search_view_location" />
-        </LinearLayout>
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="2" />
+        </ScrollView>
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/start_build_your_itinerary" />
     </LinearLayout>
-
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
@@ -68,5 +71,7 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/menu_navigation">
+
     </com.google.android.material.navigation.NavigationView>
+
 </androidx.drawerlayout.widget.DrawerLayout>

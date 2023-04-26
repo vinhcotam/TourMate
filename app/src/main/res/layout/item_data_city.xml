@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
+
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_city"
         android:layout_width="@dimen/_150sdp"
         android:layout_height="wrap_content"
-        android:id="@+id/button_city"
         android:layout_gravity="center_horizontal"
+        android:height="@dimen/_15sdp"
+        android:textSize="@dimen/_10ssp"
+        app:backgroundTint="@color/light_blue"
         app:cornerRadius="8dp"
         app:rippleColor="@color/light_blue"
-        app:backgroundTint="@color/light_blue"
         app:strokeColor="@color/dark_blue"
-        app:strokeWidth="2dp"
-        />
-
+        app:strokeWidth="2dp" />
 
 
 </LinearLayout>
