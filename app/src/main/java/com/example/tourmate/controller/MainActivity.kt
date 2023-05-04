@@ -19,8 +19,13 @@ import com.example.tourmate.databinding.ActivityMainBinding
 import com.example.tourmate.model.DataCity
 import com.example.tourmate.network.RetrofitInstance
 import com.example.tourmate.view.DataCityAdapter
+
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -35,6 +40,8 @@ class MainActivity : AppCompatActivity(), RecyclerCity0nClickListener,
     private var dataCityList = ArrayList<DataCity>()
     private lateinit var dataCityAdapter: DataCityAdapter
     private var progressDialog: MaterialDialog? = null
+    private var myJob: Job? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -63,7 +70,13 @@ class MainActivity : AppCompatActivity(), RecyclerCity0nClickListener,
         val layoutManager = GridLayoutManager(this, 2)
         binding.recycleViewDataLocation.layoutManager = layoutManager
         binding.recycleViewDataLocation.adapter = dataCityAdapter
-        getData()
+        myJob = GlobalScope.launch {
+            while (true) {
+                getData()
+                delay(3000)
+            }
+        }
+
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -186,6 +199,9 @@ class MainActivity : AppCompatActivity(), RecyclerCity0nClickListener,
 
         }
     }
-
+    override fun onStop() {
+        super.onStop()
+        myJob?.cancel()
+    }
 
 }

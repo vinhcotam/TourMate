@@ -75,4 +75,15 @@ interface ApiService {
     fun recommendRequest(@Query("name") name: String): Call<Unit>
     @GET("receivedRecommendFromPython.php")
     fun getRecommend(): Call<List<String>>
+    @GET("getDistanceByStartAndEndLocationId.php")
+    fun getDistanceByStartAndEndLocationId(
+        @Query("location_start_id") location_start_id: Int,
+        @Query("location_end_id") location_end_id: Int
+    ): Call<List<DistanceClass>>
+    @GET("insertDistanceData.php")
+    fun insertDistanceData(
+        @Query("location_start_id") location_start_id: Int,
+        @Query("location_end_id") location_end_id: Int,
+        @Query("distance") distance: Double
+    ): Call<ResponseBody>
 }

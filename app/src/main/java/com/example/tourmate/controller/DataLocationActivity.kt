@@ -65,7 +65,7 @@ class DataLocationActivity : AppCompatActivity(), RecyclerLocation0nClickListene
         GlobalScope.launch {
             while (true) {
                 getData(cityId)
-                delay(1000)
+                delay(3000)
             }
         }
 

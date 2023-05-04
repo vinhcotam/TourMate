@@ -42,7 +42,8 @@ class DetailLocationActivity : AppCompatActivity(),
     private var locationList = ArrayList<DataLocation>()
     private var recommendList = ArrayList<DataLocation>()
     private var listStringName = ArrayList<String>()
-    private var myJob: Job? = null
+
+    //    private var myJob: Job? = null
     private lateinit var dataLocationAdapter: DataLocationAdapter
     private lateinit var location: String
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,13 +73,15 @@ class DetailLocationActivity : AppCompatActivity(),
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.recycleViewRecommend.adapter = dataLocationAdapter
         getData(locationId)
-        myJob = GlobalScope.launch {
-            while (true) {
-                getFavoriteListByUidAndLocationId(auth.uid, locationId)
-                getSavedPlaceListByUidAndLocationId(auth.uid, locationId)
-                delay(1000)
-            }
-        }
+        getFavoriteListByUidAndLocationId(auth.uid, locationId)
+        getSavedPlaceListByUidAndLocationId(auth.uid, locationId)
+//        myJob = GlobalScope.launch {
+//            while (true) {
+//                getFavoriteListByUidAndLocationId(auth.uid, locationId)
+//                getSavedPlaceListByUidAndLocationId(auth.uid, locationId)
+//                delay(3000)
+//            }
+//        }
     }
 
 
@@ -109,10 +112,12 @@ class DetailLocationActivity : AppCompatActivity(),
 
     private fun receivedRecommend(newStr: String?) {
         val client = OkHttpClient()
-
         val request = Request.Builder()
-            .url("http://192.168.1.5:5001/recommend?url=$newStr")
+            .url("http://192.168.16.132:5001/recommend?url=$newStr")
             .build()
+//        val request = Request.Builder()
+//            .url("http://192.168.1.5:5001/recommend?url=$newStr")
+//            .build()
 
         client.newCall(request).enqueue(object : okhttp3.Callback {
             override fun onFailure(call: okhttp3.Call, e: IOException) {
@@ -121,7 +126,7 @@ class DetailLocationActivity : AppCompatActivity(),
 
             override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
                 if (response.isSuccessful) {
-                    val responseBody = response.body()?.string()
+                    val responseBody = response.body?.string()
                     if (responseBody != null) {
                         Log.d("HTTP", responseBody)
                     }
@@ -134,7 +139,7 @@ class DetailLocationActivity : AppCompatActivity(),
                         binding.textViewTopRecommend.visibility = View.VISIBLE
                     }
                 } else {
-                    Log.e("HTTP", "Request failed with code: ${response.code()}")
+                    Log.e("HTTP", "Request failed with code: ${response.code}")
                 }
             }
 
@@ -241,7 +246,6 @@ class DetailLocationActivity : AppCompatActivity(),
                             locationList.addAll(it)
                         }
                         requestRecommend(location)
-                        Log.d("checkkkk", locationList.size.toString())
                     }
                 }
             }
@@ -297,12 +301,11 @@ class DetailLocationActivity : AppCompatActivity(),
     private fun checkExistsSavedPlace() {
         var canAdd = true
         for (i in savedPlaceList) {
-            if (locationId == i.location_id.toString()) {
-                canAdd = false
-            }
+            canAdd = locationId != i.location_id.toString()
         }
         if (canAdd) {
             insertSavedPlaceList()
+            getSavedPlaceListByUidAndLocationId(auth.uid, locationId)
         } else {
             Toast.makeText(this, getString(R.string.location_exists), Toast.LENGTH_LONG).show()
         }
@@ -371,6 +374,7 @@ class DetailLocationActivity : AppCompatActivity(),
 
     private fun checkExistsFavorite() {
         var canAdd = true
+
         for (i in favoriteList) {
             if (locationId == i.location_id.toString()) {
                 canAdd = false
@@ -378,6 +382,7 @@ class DetailLocationActivity : AppCompatActivity(),
         }
         if (canAdd) {
             insertFavoriteList()
+            getFavoriteListByUidAndLocationId(auth.uid, locationId)
         } else {
             Toast.makeText(this, getString(R.string.location_exists), Toast.LENGTH_LONG).show()
         }
@@ -446,10 +451,10 @@ class DetailLocationActivity : AppCompatActivity(),
 
     }
 
-    override fun onStop() {
-        super.onStop()
-        myJob?.cancel()
-    }
+//    override fun onStop() {
+//        super.onStop()
+//        myJob?.cancel()
+//    }
 
     override fun onItemClick(dataLocation: DataLocation) {
         val intent = Intent(this, DetailLocationActivity::class.java)

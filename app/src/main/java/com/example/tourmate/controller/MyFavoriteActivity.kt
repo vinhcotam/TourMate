@@ -42,7 +42,6 @@ class MyFavoriteActivity : AppCompatActivity(), RecyclerFavoriteOnClickListener,
     private var favoriteList = ArrayList<ViewFavoriteLocation>()
     private lateinit var auth: FirebaseAuth
     private lateinit var viewFavoriteAdapter: ViewFavoriteAdapter
-    private var myJob: Job? = null
     private var progressDialog: MaterialDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,12 +70,7 @@ class MyFavoriteActivity : AppCompatActivity(), RecyclerFavoriteOnClickListener,
         viewFavoriteAdapter.setOnItemClickListener(this)
         binding.recycleViewFavorite.layoutManager = LinearLayoutManager(this)
         binding.recycleViewFavorite.adapter = viewFavoriteAdapter
-        myJob = GlobalScope.launch {
-            while (true) {
-                getData(auth.uid)
-                delay(3000)
-            }
-        }
+        getData(auth.uid)
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -220,6 +214,8 @@ class MyFavoriteActivity : AppCompatActivity(), RecyclerFavoriteOnClickListener,
                             getString(R.string.success),
                             Toast.LENGTH_LONG
                         ).show()
+                        getData(auth.uid)
+
                     } else {
                         Toast.makeText(
                             this@MyFavoriteActivity,
@@ -272,13 +268,7 @@ class MyFavoriteActivity : AppCompatActivity(), RecyclerFavoriteOnClickListener,
         val dialog = builder.create()
         dialog.show()
 
-
     }
 
-    override fun onStop() {
-        super.onStop()
-        myJob?.cancel()
-
-    }
 
 }

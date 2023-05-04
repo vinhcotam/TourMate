@@ -7,6 +7,8 @@ data class ViewSavedPlace(
     var name: String,
     var location: String,
     var city_id: String,
+    var latitude: String,
+    var longtitude: String,
     var vote_average: String,
     var vote_count: Int,
     var image_url: String,
