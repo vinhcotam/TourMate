@@ -180,6 +180,11 @@ class MainActivity : AppCompatActivity(), RecyclerCity0nClickListener,
                 startActivity(intent)
                 true
             }
+            R.id.nearby ->{
+                val intent = Intent(this, NearbyActivity::class.java)
+                startActivity(intent)
+                true
+            }
             R.id.log_out -> {
                 FirebaseAuth.getInstance().signOut()
                 val intent = Intent(this, LoginActivity::class.java)

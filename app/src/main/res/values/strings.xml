@@ -42,5 +42,8 @@
     <string name="saved_place">Saved Place</string>
     <string name="start_build_your_itinerary">Start build your Itinerary</string>
     <string name="top_5_recommend_for_you">Top 5 recommend for you</string>
+    <string name="neaby_me">Neaby Me</string>
+    <string name="pharmacy">pharmacy</string>
+    <string name="police">police</string>
 
 </resources>

@@ -19,6 +19,7 @@ import com.example.tourmate.R
 import com.example.tourmate.controller.interfaces.RecyclerSavedPlaceOnClickListener
 import com.example.tourmate.databinding.ActivitySavedPlaceBinding
 import com.example.tourmate.model.*
+import com.example.tourmate.network.BingMapsApi
 import com.example.tourmate.network.DistanceMatrixService
 import com.example.tourmate.network.RetrofitInstance
 import com.example.tourmate.utilities.Constants.Companion.BING_MAP_API_KEY
@@ -28,11 +29,13 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
+import com.google.gson.JsonObject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
+import org.json.JSONObject
+import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import java.util.*
@@ -124,20 +127,31 @@ class SavedPlaceActivity : AppCompatActivity(), RecyclerSavedPlaceOnClickListene
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 101)
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                101
+            )
             return
         }
         task.addOnSuccessListener {
             if (it != null) {
                 currentLocation = Location(0, it.latitude, it.longitude)
-                currentLatitude=it.latitude
+                currentLatitude = it.latitude
                 currentLongtitude = it.longitude
+                locationList.clear()
+                Log.d("testttttt", currentLocation.toString())
                 locationList.add(currentLocation as Location)
-                getDataDistance(savedPlaceList)
+                if (currentLatitude != 0.0 && currentLongtitude != 0.0) {
+                    getDataDistance(savedPlaceList)
+                }
 
             }
         }
     }
+
+
+
     private fun filterSavedPlaceList(newText: String?) {
         if (!newText.isNullOrEmpty()) {
             val filteredList = ArrayList<ViewSavedPlace>()
@@ -178,6 +192,8 @@ class SavedPlaceActivity : AppCompatActivity(), RecyclerSavedPlaceOnClickListene
                                 savedPlaceList.addAll(it)
                                 savedPlaceList.sortBy { it.english_name }
                             }
+                            locationList.clear()
+                            distanceList.clear()
                             viewSavedPlaceAdapter.notifyDataSetChanged()
                             fetchLocation()
                             if (savedPlaceList.isEmpty()) {
@@ -190,8 +206,15 @@ class SavedPlaceActivity : AppCompatActivity(), RecyclerSavedPlaceOnClickListene
                         }
                     }
 
-                    override fun onFailure(call: Call<List<ViewSavedPlace>>, t: Throwable) {
-                        Toast.makeText(this@SavedPlaceActivity, t.toString(), Toast.LENGTH_LONG)
+                    override fun onFailure(
+                        call: Call<List<ViewSavedPlace>>,
+                        t: Throwable
+                    ) {
+                        Toast.makeText(
+                            this@SavedPlaceActivity,
+                            t.toString(),
+                            Toast.LENGTH_LONG
+                        )
                             .show()
                     }
 
@@ -313,8 +336,6 @@ class SavedPlaceActivity : AppCompatActivity(), RecyclerSavedPlaceOnClickListene
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         val distanceMatrixService = retrofit.create(DistanceMatrixService::class.java)
-        Log.d("hecasjfnasdf", startLocation.toString())
-        Log.d("hecasjfnasdf", endLocation.toString())
         val origin = "${startLocation.latitude},${startLocation.longtitude}"
         val destination = "${endLocation.latitude},${endLocation.longtitude}"
         val travelMode = "driving"
@@ -335,10 +356,19 @@ class SavedPlaceActivity : AppCompatActivity(), RecyclerSavedPlaceOnClickListene
                         response.body()?.resourceSets?.get(0)?.resources?.get(0)?.results?.get(
                             0
                         )?.distance
-                    Log.d(
-                        "checkkkkk",
-                        "distance " + startLocation.id + "to " + endLocation.id + " " + distanceInMeters.toString()
-                    )
+                    val distance =
+                        distanceInMeters?.let {
+                            DistanceClass(
+                                startLocation.id, endLocation.id,
+                                it
+                            )
+                        }
+                    response.body().let {
+                        if (distance != null) {
+                            distanceList.add(distance)
+                        }
+                    }
+                    Log.d("checkdistance", distanceList.toString())
                     if (startLocation.id != 0 && endLocation.id != 0) {
                         val api = RetrofitInstance.api
                         val call = distanceInMeters?.let {
@@ -367,7 +397,11 @@ class SavedPlaceActivity : AppCompatActivity(), RecyclerSavedPlaceOnClickListene
                                     Log.d("checkkkaaaa", responseData.toString())
                                 }
                             }
-                            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+
+                            override fun onFailure(
+                                call: Call<ResponseBody>,
+                                t: Throwable
+                            ) {
                             }
                         })
                     }
@@ -382,97 +416,6 @@ class SavedPlaceActivity : AppCompatActivity(), RecyclerSavedPlaceOnClickListene
             }
         })
     }
-//    fun insertDistance(startLocation: ViewSavedPlace, endLocation: ViewSavedPlace) {
-//        val retrofit = Retrofit.Builder()
-//            .baseUrl("https://dev.virtualearth.net")
-//            .addConverterFactory(GsonConverterFactory.create())
-//            .build()
-//        val distanceMatrixService = retrofit.create(DistanceMatrixService::class.java)
-//
-//        val origin = "${startLocation.latitude},${startLocation.longtitude}"
-//        val destination = "${endLocation.latitude},${endLocation.longtitude}"
-//        val travelMode = "driving"
-//        val apiKey = BING_MAP_API_KEY
-//
-//        distanceMatrixService.getDistanceMatrix(
-//            origins = origin,
-//            destinations = destination,
-//            travelMode = travelMode,
-//            key = apiKey
-//        ).enqueue(object : Callback<DistanceMatrixResponse> {
-//            override fun onResponse(
-//                call: Call<DistanceMatrixResponse>,
-//                response: Response<DistanceMatrixResponse>
-//            ) {
-//                if (response.isSuccessful) {
-//                    val distanceInMeters =
-//                        response.body()?.resourceSets?.get(0)?.resources?.get(0)?.results?.get(
-//                            0
-//                        )?.distance
-//                    Log.d(
-//                        "checkkkkk",
-//                        "distance " + startLocation.location_id + "to " + endLocation.location_id + " " + distanceInMeters.toString()
-//                    )
-//                    val api = RetrofitInstance.api
-//                    val call = distanceInMeters?.let {
-//                        api.insertDistanceData(
-//                            location_start_id = startLocation.location_id,
-//                            location_end_id = endLocation.location_id,
-//                            distance = it
-//                        )
-//                    }
-//                    call?.enqueue(object : Callback<ResponseBody> {
-//                        override fun onResponse(
-//                            call: Call<ResponseBody>,
-//                            response: Response<ResponseBody>
-//                        ) {
-//                            if (response.isSuccessful) {
-//                                val responseData = response.body()?.string()
-//                                if (responseData != null && responseData == "success") {
-//                                    Log.d("checkkk", response.toString())
-//                                } else {
-//                                    Toast.makeText(
-//                                        this@SavedPlaceActivity,
-//                                        getString(R.string.fail),
-//                                        Toast.LENGTH_LONG
-//                                    ).show()
-//                                }
-//                                Log.d("checkkk", responseData.toString())
-//                            } else {
-//                                val error = Gson().fromJson(
-//                                    response.errorBody()?.string(),
-//                                    ErrorResponse::class.java
-//                                )
-//                                val errorMessage =
-//                                    error?.message ?: getString(R.string.unknown_error)
-////                                Toast.makeText(
-////                                    this@SavedPlaceActivity,
-////                                    errorMessage,
-////                                    Toast.LENGTH_LONG
-////                                ).show()
-//                            }
-//                        }
-//
-//                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-////                            Toast.makeText(
-////                                this@SavedPlaceActivity,
-////                                t.toString(),
-////                                Toast.LENGTH_LONG
-////                            ).show()
-//                        }
-//
-//                    })
-//                } else {
-//                    Log.e("checkkkkk", "HTTP error code ${response.code()}")
-//                }
-//
-//            }
-//
-//            override fun onFailure(call: Call<DistanceMatrixResponse>, t: Throwable) {
-//                Log.e("checkkkkk", "Failed to get distance matrix: ${t.message}")
-//            }
-//        })
-//    }
 
     private fun getDataDistance(savedPlaceList: List<ViewSavedPlace>) {
         for (viewSavedPlace in savedPlaceList) {
@@ -483,14 +426,7 @@ class SavedPlaceActivity : AppCompatActivity(), RecyclerSavedPlaceOnClickListene
             )
             locationList.add(location)
         }
-        if (distanceList.isNotEmpty()){
-            for (i in distanceList){
-                if (i.location_start_id !=0 || i.location_end_id !=0){
-                    distanceList.clear()
-                }
-            }
-        }
-        Log.d("currentlocation", locationList.toString())
+
         for (i in 0 until locationList.size - 1) {
             for (j in i + 1 until locationList.size) {
                 val api = RetrofitInstance.api
@@ -506,50 +442,32 @@ class SavedPlaceActivity : AppCompatActivity(), RecyclerSavedPlaceOnClickListene
                             if (response.body()?.isEmpty() == true) {
                                 insertDistance(locationList[i], locationList[j])
                             } else {
-                                response.body()?.let { distanceList.addAll(it) }
+                                response.body()?.let {
+                                    distanceList.clear()
+                                    if (locationList[i].id != locationList[j].id) {
+                                        distanceList.addAll(it)
+                                    }
+                                }
                             }
-                            Log.d("checkkkkk", response.body().toString())
+                            Log.d("checkdistance1", distanceList.toString())
 
                         }
                     }
 
-                    override fun onFailure(call: Call<List<DistanceClass>>, t: Throwable) {
-                        Toast.makeText(this@SavedPlaceActivity, t.toString(), Toast.LENGTH_LONG)
+                    override fun onFailure(
+                        call: Call<List<DistanceClass>>,
+                        t: Throwable
+                    ) {
+                        Toast.makeText(
+                            this@SavedPlaceActivity,
+                            t.toString(),
+                            Toast.LENGTH_LONG
+                        )
                             .show()
                     }
                 })
             }
         }
-//        for (i in 0 until savedPlaceList.size - 1) {
-//            for (j in i + 1 until savedPlaceList.size) {
-//                val api = RetrofitInstance.api
-//                api.getDistanceByStartAndEndLocationId(
-//                    savedPlaceList[i].location_id,
-//                    savedPlaceList[j].location_id
-//                ).enqueue(object : Callback<List<DistanceClass>> {
-//                    override fun onResponse(
-//                        call: Call<List<DistanceClass>>,
-//                        response: Response<List<DistanceClass>>
-//                    ) {
-//                        if (response.isSuccessful) {
-//                            if (response.body()?.isEmpty() == true) {
-//                                insertDistance(savedPlaceList[i], savedPlaceList[j])
-//                            } else {
-//                                response.body()?.let { distanceList.addAll(it) }
-//                            }
-//                            Log.d("checkkkkk", response.body().toString())
-//
-//                        }
-//                    }
-//
-//                    override fun onFailure(call: Call<List<DistanceClass>>, t: Throwable) {
-//                        Toast.makeText(this@SavedPlaceActivity, t.toString(), Toast.LENGTH_LONG)
-//                            .show()
-//                    }
-//                })
-//            }
-//        }
-
 
 //        for (i in 0 until savedPlaceList.size - 1) {
 //            for (j in i + 1 until savedPlaceList.size) {
@@ -575,8 +493,6 @@ class SavedPlaceActivity : AppCompatActivity(), RecyclerSavedPlaceOnClickListene
 //                }
 //            }
 //        }
-
-
     }
 
 }

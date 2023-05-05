@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
@@ -18,6 +18,13 @@
         android:theme="@style/Theme.TourMate"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".controller.NearbyActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".controller.SavedPlaceActivity"
             android:exported="false">
@@ -59,7 +66,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyApZj65HWia0MWhjXzJHXjOA-eRvBU3-gk" />
+            android:value="AIzaSyCAtOve4bWG6muIDkS7EKhMPE9u5Gtx_ic" />
 
         <activity
             android:name=".controller.LoginActivity"

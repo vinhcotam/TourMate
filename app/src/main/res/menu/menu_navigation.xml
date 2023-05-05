@@ -7,6 +7,10 @@
         android:id="@+id/favorite"
         android:title="@string/my_favorite" />
     <item
+        android:id="@+id/nearby"
+        android:title="@string/neaby_me"
+        />
+    <item
         android:id="@+id/saved_place"
         android:title="@string/saved_place" />
     <item
