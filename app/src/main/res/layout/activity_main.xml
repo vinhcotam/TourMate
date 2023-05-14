@@ -9,10 +9,11 @@
     tools:context=".controller.MainActivity"
     tools:openDrawer="start">
 
+
     <LinearLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -31,28 +32,129 @@
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/search_view"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/searchview_background"
-            android:iconifiedByDefault="false"
-            android:queryHint="Search..."
-            android:typeface="sans" />
-        <TextView
-            android:id="@+id/text_view_empty_notice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/no_data_found"
-            android:visibility="invisible" />
+            android:layout_height="wrap_content">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycleViewDataLocation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="2" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/viewPager2"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:background="@drawable/border_layout" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_5sdp"
+                        android:text="@string/top_10_best_location_in_vietnam"
+                        android:textSize="@dimen/_15ssp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycle_top10"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_5sdp"
+                        android:orientation="horizontal" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:text="@string/choose_the_city_for_your_tour"
+                    android:textSize="@dimen/_15ssp" />
+
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/search_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/searchview_background"
+                    android:iconifiedByDefault="false"
+                    android:typeface="sans" />
+
+                <TextView
+                    android:id="@+id/text_view_empty_notice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_data_found"
+                    android:visibility="invisible" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycleViewDataLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+                <!--                android:layout_width="match_parent"-->
+                <!--                android:layout_height="wrap_content"-->
+                <!--                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"-->
+                <!--                app:spanCount="2" />-->
+                <TextView
+                    android:id="@+id/text_view_more"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:gravity="end"
+                    android:onClick="onButtonMainActivityClick"
+                    android:text="@string/more" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycle_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:background="@color/light_blue"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:text="@string/tour_mate"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:text="@string/_0966175932"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:layout_weight="1"
+                        android:text="@string/_2023_travel_vietnam"
+                        android:textColor="@color/white" />
+
+                    <ImageView
+                        android:layout_width="@dimen/_50sdp"
+                        android:layout_height="@dimen/_50sdp"
+                        android:padding="8dp"
+                        android:src="@drawable/logo" />
+
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -61,8 +163,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/menu_navigation">
-
-    </com.google.android.material.navigation.NavigationView>
+        app:menu="@menu/menu_navigation" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

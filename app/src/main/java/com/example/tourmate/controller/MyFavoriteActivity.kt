@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.tourmate.R
+import com.example.tourmate.base.BaseActivity
 import com.example.tourmate.controller.interfaces.RecyclerFavoriteOnClickListener
 import com.example.tourmate.databinding.ActivityMyFavoriteBinding
 import com.example.tourmate.model.ErrorResponse
@@ -34,7 +35,7 @@ import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
-class MyFavoriteActivity : AppCompatActivity(), RecyclerFavoriteOnClickListener,
+class MyFavoriteActivity : BaseActivity(), RecyclerFavoriteOnClickListener,
     NavigationView.OnNavigationItemSelectedListener {
     private val binding by lazy {
         ActivityMyFavoriteBinding.inflate(layoutInflater)
@@ -104,7 +105,7 @@ class MyFavoriteActivity : AppCompatActivity(), RecyclerFavoriteOnClickListener,
         if (!newText.isNullOrEmpty()) {
             val filteredList = ArrayList<ViewFavoriteLocation>()
             for (i in favoriteList) {
-                if (i.english_name.lowercase(Locale.ROOT).contains(newText)) {
+                if (i.english_name.lowercase(Locale.ROOT).contains(newText) || i.location.lowercase(Locale.ROOT).contains(newText)) {
                     filteredList.add(i)
                 }
             }
@@ -154,6 +155,8 @@ class MyFavoriteActivity : AppCompatActivity(), RecyclerFavoriteOnClickListener,
                     override fun onFailure(call: Call<List<ViewFavoriteLocation>>, t: Throwable) {
                         Toast.makeText(this@MyFavoriteActivity, t.toString(), Toast.LENGTH_LONG)
                             .show()
+                        progressDialog?.dismiss()
+
                     }
 
                 })
@@ -175,6 +178,11 @@ class MyFavoriteActivity : AppCompatActivity(), RecyclerFavoriteOnClickListener,
             }
             R.id.saved_place -> {
                 val intent = Intent(this, SavedPlaceActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            R.id.nearby ->{
+                val intent = Intent(this, NearbyActivity::class.java)
                 startActivity(intent)
                 true
             }

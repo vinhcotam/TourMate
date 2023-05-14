@@ -86,4 +86,6 @@ interface ApiService {
         @Query("location_end_id") location_end_id: Int,
         @Query("distance") distance: Double
     ): Call<ResponseBody>
+    @GET("getTop10Location.php")
+    fun getTop10Locations(): Call<List<DataLocation>>
 }

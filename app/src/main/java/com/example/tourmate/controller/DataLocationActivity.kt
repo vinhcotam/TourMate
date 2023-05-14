@@ -12,6 +12,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.tourmate.R
+import com.example.tourmate.base.BaseActivity
 import com.example.tourmate.controller.interfaces.RecyclerLocation0nClickListener
 import com.example.tourmate.databinding.ActivityDataLocationBinding
 import com.example.tourmate.model.DataLocation
@@ -28,7 +29,7 @@ import retrofit2.Response
 import java.util.*
 import kotlin.collections.ArrayList
 
-class DataLocationActivity : AppCompatActivity(), RecyclerLocation0nClickListener,
+class DataLocationActivity : BaseActivity(), RecyclerLocation0nClickListener,
     NavigationView.OnNavigationItemSelectedListener {
     private val binding by lazy {
         ActivityDataLocationBinding.inflate(layoutInflater)
@@ -57,18 +58,17 @@ class DataLocationActivity : AppCompatActivity(), RecyclerLocation0nClickListene
             show()
         }
         val cityId: String = intent.getStringExtra("city_id").toString()
+        Log.d("ádfas", cityId)
         dataLocationList = ArrayList()
         dataLocationAdapter = DataLocationAdapter(this, dataLocationList)
         dataLocationAdapter.setOnItemClickListener(this)
         binding.recycleViewDataLocation.layoutManager = LinearLayoutManager(this)
         binding.recycleViewDataLocation.adapter = dataLocationAdapter
-        GlobalScope.launch {
-            while (true) {
-                getData(cityId)
-                delay(3000)
-            }
+        if (cityId != "0") {
+            getData(cityId)
+        } else {
+            getAllLocation()
         }
-
         binding.searchViewLocation.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -93,9 +93,35 @@ class DataLocationActivity : AppCompatActivity(), RecyclerLocation0nClickListene
 
                 dataLocationAdapter.notifyDataSetChanged()
             }
-            Log.d("eizeeez", dataLocationList.size.toString())
             true
         }
+    }
+
+    private fun getAllLocation() {
+        val api = RetrofitInstance.api
+        api.getLocations().enqueue(object : Callback<List<DataLocation>> {
+            override fun onResponse(
+                call: Call<List<DataLocation>>,
+                response: Response<List<DataLocation>>
+            ) {
+                if (response.isSuccessful) {
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            dataLocationList.clear()
+                            dataLocationList.addAll(it)
+                            dataLocationAdapter.notifyDataSetChanged()
+                            progressDialog?.dismiss()                        }
+                    }
+                    Log.d("asa", dataLocationList.size.toString())
+                }
+            }
+
+            override fun onFailure(call: Call<List<DataLocation>>, t: Throwable) {
+                Toast.makeText(this@DataLocationActivity, t.toString(), Toast.LENGTH_LONG)
+                    .show()
+            }
+
+        })
     }
 
     private fun getData(cityId: String?) {
@@ -121,6 +147,8 @@ class DataLocationActivity : AppCompatActivity(), RecyclerLocation0nClickListene
                 override fun onFailure(call: Call<List<DataLocation>>, t: Throwable) {
                     Toast.makeText(this@DataLocationActivity, t.toString(), Toast.LENGTH_LONG)
                         .show()
+                    progressDialog?.dismiss()
+
                 }
             })
         }
@@ -130,7 +158,7 @@ class DataLocationActivity : AppCompatActivity(), RecyclerLocation0nClickListene
         if (!newText.isNullOrEmpty()) {
             val filteredList = ArrayList<DataLocation>()
             for (i in dataLocationList) {
-                if (i.english_name.lowercase(Locale.ROOT).contains(newText)) {
+                if (i.english_name.lowercase(Locale.ROOT).contains(newText) || i.location.lowercase(Locale.ROOT).contains(newText)) {
                     filteredList.add(i)
                 }
             }
@@ -171,6 +199,11 @@ class DataLocationActivity : AppCompatActivity(), RecyclerLocation0nClickListene
             }
             R.id.saved_place -> {
                 val intent = Intent(this, SavedPlaceActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            R.id.nearby -> {
+                val intent = Intent(this, NearbyActivity::class.java)
                 startActivity(intent)
                 true
             }

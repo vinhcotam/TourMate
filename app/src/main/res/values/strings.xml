@@ -45,5 +45,15 @@
     <string name="neaby_me">Neaby Me</string>
     <string name="pharmacy">pharmacy</string>
     <string name="police">police</string>
+    <string name="fuel">fuel</string>
+    <string name="top_10_best_location_in_vietnam">Top 10 best location in VietNam</string>
+    <string name="choose_the_city_for_your_tour">Choose the city for your tour</string>
+    <string name="tour_mate">Tour Mate</string>
+    <string name="_0966175932">0966175932</string>
+    <string name="_2023_travel_vietnam">© 2023 - Travel Vietnam</string>
+    <string name="more">More</string>
+    <string name="oops">Oops!</string>
+    <string name="no_internet_connection_found">no_internet_connection_found. \n Check your internet connection</string>
+    <string name="try_again">Try again</string>
 
 </resources>

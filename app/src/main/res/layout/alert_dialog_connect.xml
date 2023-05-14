@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/_30sdp"
+    android:layout_gravity="top"
+    android:background="@drawable/rounded_corners"
+    android:backgroundTint="@color/light_blue"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_wifi_off" />
+
+    <TextView
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:text="@string/oops"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+    <TextView
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:text="@string/no_internet_connection_found"
+        android:textAlignment="center"
+        android:fontFamily="serif"
+        android:textColor="@color/white"
+        android:layout_marginTop="@dimen/_50sdp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:text="@string/try_again"
+        android:id="@+id/button_try_again"
+        android:textAllCaps="false"
+        android:backgroundTint="@color/light_gray"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

@@ -22,61 +22,116 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/light_blue"
                 android:theme="@style/ThemeOverlay.AppCompat.Light"
-                app:titleTextColor="@color/white">
-
-            </androidx.appcompat.widget.Toolbar>
+                app:titleTextColor="@color/white" />
         </com.google.android.material.appbar.AppBarLayout>
-        <HorizontalScrollView
+
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <LinearLayout
+
+            <fragment
+                android:id="@+id/map_fragment"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                tools:context=".controller.NearbyActivity" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_search_cafe"
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:onClick="onClickNearbySearch"
-                    android:text="@string/cafe" />
+                    android:padding="@dimen/_8sdp"
+                    app:chipSpacingHorizontal="@dimen/_8sdp"
+                    app:singleLine="true"
+                    app:singleSelection="true">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_search_atm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="onClickNearbySearch"
-                    android:text="@string/atm" />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_cafe"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/light_blue"
+                        android:checkable="false"
+                        android:onClick="onClickNearbySearch"
+                        android:text="@string/cafe"
+                        android:textColor="@color/white"
+                        app:chipIcon="@drawable/ic_cafe"
+                        app:chipIconTint="@color/light_blue" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_search_restaurant"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="onClickNearbySearch"
-                    android:text="@string/restaurant" />
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_search_pharmacy"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="onClickNearbySearch"
-                    android:text="@string/pharmacy" />
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_search_shop"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="onClickNearbySearch"
-                    android:text="@string/shopping" />
-            </LinearLayout>
-        </HorizontalScrollView>
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_atm"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/light_blue"
+                        android:checkable="false"
+                        android:onClick="onClickNearbySearch"
+                        android:text="@string/atm"
+                        android:textColor="@color/white"
+                        app:chipIcon="@drawable/ic_atm" />
 
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_restaurant"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/light_blue"
+                        android:checkable="false"
+                        android:text="@string/restaurant"
+                        android:onClick="onClickNearbySearch"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_12ssp"
+                        app:chipIcon="@drawable/ic_food" />
 
-        <fragment
-            android:id="@+id/map_fragment"
-            class="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_pharmacy"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/light_blue"
+                        android:checkable="false"
+                        android:onClick="onClickNearbySearch"
+                        android:text="@string/pharmacy"
+                        android:textColor="@color/white"
+                        app:chipIcon="@drawable/ic_pharmacy" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_shopping"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/light_blue"
+                        android:checkable="false"
+                        android:onClick="onClickNearbySearch"
+                        android:text="@string/shopping"
+                        android:textColor="@color/white"
+                        app:chipIcon="@drawable/ic_shopping" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_fuel"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/light_blue"
+                        android:checkable="false"
+                        android:onClick="onClickNearbySearch"
+                        android:text="@string/fuel"
+                        android:textColor="@color/white"
+                        app:chipIcon="@drawable/ic_fuel" />
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+        </FrameLayout>
     </LinearLayout>
 
-
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/menu_navigation" />
 </androidx.drawerlayout.widget.DrawerLayout>

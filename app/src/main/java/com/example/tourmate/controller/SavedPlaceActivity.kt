@@ -16,6 +16,7 @@ import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.tourmate.R
+import com.example.tourmate.base.BaseActivity
 import com.example.tourmate.controller.interfaces.RecyclerSavedPlaceOnClickListener
 import com.example.tourmate.databinding.ActivitySavedPlaceBinding
 import com.example.tourmate.model.*
@@ -42,7 +43,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class SavedPlaceActivity : AppCompatActivity(), RecyclerSavedPlaceOnClickListener,
+class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener,
     NavigationView.OnNavigationItemSelectedListener {
     private val binding by lazy {
         ActivitySavedPlaceBinding.inflate(layoutInflater)
@@ -156,7 +157,7 @@ class SavedPlaceActivity : AppCompatActivity(), RecyclerSavedPlaceOnClickListene
         if (!newText.isNullOrEmpty()) {
             val filteredList = ArrayList<ViewSavedPlace>()
             for (i in savedPlaceList) {
-                if (i.english_name.lowercase(Locale.ROOT).contains(newText)) {
+                if (i.english_name.lowercase(Locale.ROOT).contains(newText) || i.location.lowercase(Locale.ROOT).contains(newText)) {
                     filteredList.add(i)
                 }
             }
@@ -210,12 +211,9 @@ class SavedPlaceActivity : AppCompatActivity(), RecyclerSavedPlaceOnClickListene
                         call: Call<List<ViewSavedPlace>>,
                         t: Throwable
                     ) {
-                        Toast.makeText(
-                            this@SavedPlaceActivity,
-                            t.toString(),
-                            Toast.LENGTH_LONG
-                        )
-                            .show()
+                        Toast.makeText(this@SavedPlaceActivity, t.toString(), Toast.LENGTH_LONG).show()
+                        progressDialog?.dismiss()
+
                     }
 
                 })
@@ -316,6 +314,11 @@ class SavedPlaceActivity : AppCompatActivity(), RecyclerSavedPlaceOnClickListene
             }
             R.id.saved_place -> {
                 val intent = Intent(this, SavedPlaceActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            R.id.nearby ->{
+                val intent = Intent(this, NearbyActivity::class.java)
                 startActivity(intent)
                 true
             }

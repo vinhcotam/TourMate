@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.tourmate.R
+import com.example.tourmate.base.BaseActivity
 import com.example.tourmate.controller.interfaces.RecyclerLocation0nClickListener
 import com.example.tourmate.databinding.ActivityDetailLocationBinding
 import com.example.tourmate.model.*
@@ -30,7 +31,7 @@ import java.io.IOException
 import kotlin.random.Random
 
 
-class DetailLocationActivity : AppCompatActivity(),
+class DetailLocationActivity : BaseActivity(),
     NavigationView.OnNavigationItemSelectedListener, RecyclerLocation0nClickListener {
     private val binding by lazy {
         ActivityDetailLocationBinding.inflate(layoutInflater)
@@ -113,7 +114,7 @@ class DetailLocationActivity : AppCompatActivity(),
     private fun receivedRecommend(newStr: String?) {
         val client = OkHttpClient()
         val request = Request.Builder()
-            .url("http://192.168.16.132:5001/recommend?url=$newStr")
+            .url("http://192.168.1.7:5001/recommend?url=$newStr")
             .build()
 //        val request = Request.Builder()
 //            .url("http://192.168.1.5:5001/recommend?url=$newStr")
@@ -273,6 +274,11 @@ class DetailLocationActivity : AppCompatActivity(),
             }
             R.id.saved_place -> {
                 val intent = Intent(this, SavedPlaceActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            R.id.nearby ->{
+                val intent = Intent(this, NearbyActivity::class.java)
                 startActivity(intent)
                 true
             }
