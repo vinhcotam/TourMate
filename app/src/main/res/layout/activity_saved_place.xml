@@ -67,6 +67,7 @@
                 android:id="@+id/btnStartItinerary"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:onClick="onClickSavedPlace"
                 android:text="@string/start_build_your_itinerary"
                 app:layout_constraintBottom_toTopOf="@id/linearLayout"
                 app:layout_constraintStart_toStartOf="parent"

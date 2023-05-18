@@ -1,14 +1,13 @@
 package com.example.tourmate.controller
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.tourmate.R
@@ -18,19 +17,13 @@ import com.example.tourmate.databinding.ActivityDataLocationBinding
 import com.example.tourmate.model.DataLocation
 import com.example.tourmate.network.RetrofitInstance
 import com.example.tourmate.view.DataLocationAdapter
-import com.google.android.material.navigation.NavigationView
-import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 import kotlin.collections.ArrayList
 
-class DataLocationActivity : BaseActivity(), RecyclerLocation0nClickListener,
-    NavigationView.OnNavigationItemSelectedListener {
+class DataLocationActivity : BaseActivity(), RecyclerLocation0nClickListener {
     private val binding by lazy {
         ActivityDataLocationBinding.inflate(layoutInflater)
     }
@@ -58,7 +51,6 @@ class DataLocationActivity : BaseActivity(), RecyclerLocation0nClickListener,
             show()
         }
         val cityId: String = intent.getStringExtra("city_id").toString()
-        Log.d("ádfas", cityId)
         dataLocationList = ArrayList()
         dataLocationAdapter = DataLocationAdapter(this, dataLocationList)
         dataLocationAdapter.setOnItemClickListener(this)
@@ -112,7 +104,6 @@ class DataLocationActivity : BaseActivity(), RecyclerLocation0nClickListener,
                             dataLocationAdapter.notifyDataSetChanged()
                             progressDialog?.dismiss()                        }
                     }
-                    Log.d("asa", dataLocationList.size.toString())
                 }
             }
 
@@ -120,7 +111,6 @@ class DataLocationActivity : BaseActivity(), RecyclerLocation0nClickListener,
                 Toast.makeText(this@DataLocationActivity, t.toString(), Toast.LENGTH_LONG)
                     .show()
             }
-
         })
     }
 
@@ -184,37 +174,12 @@ class DataLocationActivity : BaseActivity(), RecyclerLocation0nClickListener,
         intent.putExtra("location_id", dataLocation.id.toString())
         startActivity(intent)
     }
+    override fun onBackPressed() {
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.home -> {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.favorite -> {
-                val intent = Intent(this, MyFavoriteActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.saved_place -> {
-                val intent = Intent(this, SavedPlaceActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.nearby -> {
-                val intent = Intent(this, NearbyActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.log_out -> {
-                FirebaseAuth.getInstance().signOut()
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
-                true
-            }
-            else -> false
         }
     }
 

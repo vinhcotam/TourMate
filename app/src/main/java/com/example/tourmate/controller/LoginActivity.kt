@@ -56,7 +56,6 @@ class LoginActivity : BaseActivity() {
             .setIsSmartLockEnabled(false)
             .setAvailableProviders(listAuthProviders)
             .setLogo(R.drawable.welcome)
-//            .setTheme(R.style.ThemeLoginUI)
             .build()
         signInLauncher.launch(signInIntent)
     }

@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.tourmate.R
@@ -31,8 +32,7 @@ import java.io.IOException
 import kotlin.random.Random
 
 
-class DetailLocationActivity : BaseActivity(),
-    NavigationView.OnNavigationItemSelectedListener, RecyclerLocation0nClickListener {
+class DetailLocationActivity : BaseActivity(), RecyclerLocation0nClickListener {
     private val binding by lazy {
         ActivityDetailLocationBinding.inflate(layoutInflater)
     }
@@ -43,8 +43,6 @@ class DetailLocationActivity : BaseActivity(),
     private var locationList = ArrayList<DataLocation>()
     private var recommendList = ArrayList<DataLocation>()
     private var listStringName = ArrayList<String>()
-
-    //    private var myJob: Job? = null
     private lateinit var dataLocationAdapter: DataLocationAdapter
     private lateinit var location: String
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,18 +74,10 @@ class DetailLocationActivity : BaseActivity(),
         getData(locationId)
         getFavoriteListByUidAndLocationId(auth.uid, locationId)
         getSavedPlaceListByUidAndLocationId(auth.uid, locationId)
-//        myJob = GlobalScope.launch {
-//            while (true) {
-//                getFavoriteListByUidAndLocationId(auth.uid, locationId)
-//                getSavedPlaceListByUidAndLocationId(auth.uid, locationId)
-//                delay(3000)
-//            }
-//        }
     }
 
 
     private fun requestRecommend(location: String) {
-
         val api = RetrofitInstance.api
         api.recommendRequest(location).enqueue(object : Callback<Unit> {
             override fun onResponse(
@@ -103,7 +93,6 @@ class DetailLocationActivity : BaseActivity(),
                     receivedRecommend(newStr)
                 }
             }
-
             override fun onFailure(call: Call<Unit>, t: Throwable) {
                 Toast.makeText(this@DetailLocationActivity, t.toString(), Toast.LENGTH_LONG).show()
             }
@@ -114,27 +103,27 @@ class DetailLocationActivity : BaseActivity(),
     private fun receivedRecommend(newStr: String?) {
         val client = OkHttpClient()
         val request = Request.Builder()
-            .url("http://192.168.1.7:5001/recommend?url=$newStr")
-            .build()
-//        val request = Request.Builder()
-//            .url("http://192.168.1.5:5001/recommend?url=$newStr")
-//            .build()
+            .url("http://192.168.16.105:5001/recommend?url=$newStr")
 
+//            .url("http://192.168.1.5:5001/recommend?url=$newStr")
+            .build()
         client.newCall(request).enqueue(object : okhttp3.Callback {
             override fun onFailure(call: okhttp3.Call, e: IOException) {
                 Log.d("HTTP", e.message.toString())
             }
 
             override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                Log.d("HTTP", response.toString())
+
                 if (response.isSuccessful) {
                     val responseBody = response.body?.string()
                     if (responseBody != null) {
                         Log.d("HTTP", responseBody)
                     }
+
                     val results: List<String> =
                         Gson().fromJson(responseBody, Array<String>::class.java).toList()
                     recommendList.addAll(locationList.filter { it.name in results })
-                    Log.d("HTTP", recommendList.size.toString())
                     runOnUiThread {
                         dataLocationAdapter.notifyDataSetChanged()
                         binding.textViewTopRecommend.visibility = View.VISIBLE
@@ -191,12 +180,10 @@ class DetailLocationActivity : BaseActivity(),
                             }
                         }
                     }
-
                     override fun onFailure(call: Call<List<FavoriteList>>, t: Throwable) {
                         Toast.makeText(this@DetailLocationActivity, t.toString(), Toast.LENGTH_LONG)
                             .show()
                     }
-
                 })
         }
 
@@ -258,39 +245,6 @@ class DetailLocationActivity : BaseActivity(),
 
         })
 
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.home -> {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.favorite -> {
-                val intent = Intent(this, MyFavoriteActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.saved_place -> {
-                val intent = Intent(this, SavedPlaceActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.nearby ->{
-                val intent = Intent(this, NearbyActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.log_out -> {
-                FirebaseAuth.getInstance().signOut()
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
-                true
-            }
-            else -> false
-        }
     }
 
     fun onButtonClick(view: View) {
@@ -453,19 +407,18 @@ class DetailLocationActivity : BaseActivity(),
             }
 
         })
-
-
     }
-
-//    override fun onStop() {
-//        super.onStop()
-//        myJob?.cancel()
-//    }
-
     override fun onItemClick(dataLocation: DataLocation) {
         val intent = Intent(this, DetailLocationActivity::class.java)
         intent.putExtra("location_id", dataLocation.id.toString())
         startActivity(intent)
     }
+    override fun onBackPressed() {
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
 
+        }
+    }
 }

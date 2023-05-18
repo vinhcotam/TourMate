@@ -10,6 +10,7 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.tourmate.R
@@ -35,8 +36,7 @@ import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
-class MyFavoriteActivity : BaseActivity(), RecyclerFavoriteOnClickListener,
-    NavigationView.OnNavigationItemSelectedListener {
+class MyFavoriteActivity : BaseActivity(), RecyclerFavoriteOnClickListener {
     private val binding by lazy {
         ActivityMyFavoriteBinding.inflate(layoutInflater)
     }
@@ -164,39 +164,6 @@ class MyFavoriteActivity : BaseActivity(), RecyclerFavoriteOnClickListener,
     }
 
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.home -> {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.favorite -> {
-                val intent = Intent(this, MyFavoriteActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.saved_place -> {
-                val intent = Intent(this, SavedPlaceActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.nearby ->{
-                val intent = Intent(this, NearbyActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.log_out -> {
-                FirebaseAuth.getInstance().signOut()
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
-                true
-            }
-            else -> false
-        }
-    }
-
     override fun onItemClick(viewFavoriteLocation: ViewFavoriteLocation) {
         val intent = Intent(this, DetailLocationActivity::class.java)
         intent.putExtra("location_id", viewFavoriteLocation.location_id.toString())
@@ -275,8 +242,14 @@ class MyFavoriteActivity : BaseActivity(), RecyclerFavoriteOnClickListener,
         }
         val dialog = builder.create()
         dialog.show()
-
     }
+    override fun onBackPressed() {
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
 
+        }
+    }
 
 }

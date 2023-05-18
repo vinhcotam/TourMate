@@ -40,7 +40,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="saved_place">Saved Place</string>
-    <string name="start_build_your_itinerary">Start build your Itinerary</string>
+    <string name="start_build_your_itinerary">Build Itinerary</string>
     <string name="top_5_recommend_for_you">Top 5 recommend for you</string>
     <string name="neaby_me">Neaby Me</string>
     <string name="pharmacy">pharmacy</string>
@@ -53,7 +53,11 @@
     <string name="_2023_travel_vietnam">© 2023 - Travel Vietnam</string>
     <string name="more">More</string>
     <string name="oops">Oops!</string>
-    <string name="no_internet_connection_found">no_internet_connection_found. \n Check your internet connection</string>
+    <string name="no_internet_connection_found">No internet connection found. \n Check your internet connection</string>
     <string name="try_again">Try again</string>
+    <string name="this_is_the_itinerary_that_i_suggest_for_you">This is the itinerary that I suggest for you</string>
+    <string name="edit_itinerary">Edit Itinerary</string>
+    <string name="recalculation">Recalculation</string>
+    <string name="view_on_map">View on Map</string>
 
 </resources>

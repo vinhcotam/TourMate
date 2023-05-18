@@ -15,5 +15,6 @@ data class DataLocation(
     var max_hour: Double,
     var image_url: String,
     var description: String,
-    var english_name: String
+    var english_name: String,
+
 )

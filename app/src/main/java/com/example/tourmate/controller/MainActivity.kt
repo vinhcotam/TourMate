@@ -2,24 +2,13 @@ package com.example.tourmate.controller
 
 
 import android.Manifest
-import android.app.Dialog
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.net.ConnectivityManager
-
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
 import android.view.View
-import android.view.WindowManager
-import android.widget.Button
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -34,16 +23,13 @@ import com.example.tourmate.controller.interfaces.RecyclerLocation0nClickListene
 import com.example.tourmate.databinding.ActivityMainBinding
 import com.example.tourmate.model.DataCity
 import com.example.tourmate.model.DataLocation
-import com.example.tourmate.model.Location
-import com.example.tourmate.network.NetworkChangeReceiver
+import com.example.tourmate.model.LocationClass
 import com.example.tourmate.network.RetrofitInstance
 import com.example.tourmate.view.DataCityAdapter
 import com.example.tourmate.view.DataLocationAdapter
 import com.example.tourmate.view.ImagePagerAdapter
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.material.navigation.NavigationView
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -55,8 +41,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class MainActivity : BaseActivity(), RecyclerCity0nClickListener,
-    RecyclerLocation0nClickListener,
-    NavigationView.OnNavigationItemSelectedListener {
+    RecyclerLocation0nClickListener {
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -78,9 +63,8 @@ class MainActivity : BaseActivity(), RecyclerCity0nClickListener,
     private var dataLocationList = ArrayList<DataLocation>()
     private lateinit var dataLocationAdapter: DataLocationAdapter
     private var currentCityId = "0"
-    private var currentLocation: Location? = null
+    private var currentLocation: LocationClass? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private val networkChangeReceiver = NetworkChangeReceiver()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -98,10 +82,6 @@ class MainActivity : BaseActivity(), RecyclerCity0nClickListener,
         binding.navigationView.menu.findItem(R.id.home).isChecked = true
         val adapter = ImagePagerAdapter(this, imageUrls)
         binding.viewPager2.adapter = adapter
-//        binding.viewPager2.postDelayed({
-//            binding.viewPager2.currentItem =
-//                (binding.viewPager2.currentItem + 1) % adapter.itemCount
-//        }, 1000)
         val timer = Timer()
         timer.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
@@ -128,7 +108,6 @@ class MainActivity : BaseActivity(), RecyclerCity0nClickListener,
             show()
         }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-//        val layoutManager = GridLayoutManager(this, 2)
         binding.recycleViewDataLocation.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.recycleViewDataLocation.adapter = dataCityAdapter
@@ -201,7 +180,7 @@ class MainActivity : BaseActivity(), RecyclerCity0nClickListener,
         }
         task.addOnSuccessListener {
             if (it != null) {
-                currentLocation = Location(0, it.latitude, it.longitude)
+                currentLocation = LocationClass(0, it.latitude, it.longitude, "My Locaton")
             }
         }
     }
@@ -217,18 +196,14 @@ class MainActivity : BaseActivity(), RecyclerCity0nClickListener,
                     response.body()?.let { it ->
                         dataTop10LocationList.clear()
                         dataTop10LocationList.addAll(it)
-//                        dataCityList.sortBy { it.city_name }
                     }
                     dataTop10LocationAdapter.notifyDataSetChanged()
                     binding.textViewMore.visibility = View.VISIBLE
-//                    progressDialog?.dismiss()
 
                 }
             }
-
             override fun onFailure(call: Call<List<DataLocation>>, t: Throwable) {
                 Toast.makeText(binding.root.context, t.toString(), Toast.LENGTH_LONG).show()
-                progressDialog?.dismiss()
             }
 
         })
@@ -247,7 +222,6 @@ class MainActivity : BaseActivity(), RecyclerCity0nClickListener,
                         val all = DataCity("0", "All", "All")
                         dataCityList.add(all)
                         dataCityList.addAll(it)
-//                        dataCityList.sortBy { it.city_name }
                     }
                     dataCityAdapter.notifyDataSetChanged()
                     progressDialog?.dismiss()
@@ -324,9 +298,6 @@ class MainActivity : BaseActivity(), RecyclerCity0nClickListener,
     }
 
     override fun onItemClick(dataCity: DataCity) {
-//        val intent = Intent(this, DataLocationActivity::class.java)
-//        intent.putExtra("city_id", dataCity.city_id)
-//        startActivity(intent)
         progressDialog = MaterialDialog(this).apply {
             title(text = "Loading")
             message(text = "Please wait...")
@@ -339,8 +310,6 @@ class MainActivity : BaseActivity(), RecyclerCity0nClickListener,
             getAllLocation()
         }
         currentCityId = dataCity.city_id
-
-
     }
 
     private fun getAllLocation() {
@@ -359,7 +328,6 @@ class MainActivity : BaseActivity(), RecyclerCity0nClickListener,
                             progressDialog?.dismiss()
                         }
                     }
-                    Log.d("asa", dataLocationList.size.toString())
                 }
             }
 
@@ -371,38 +339,6 @@ class MainActivity : BaseActivity(), RecyclerCity0nClickListener,
         })
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.home -> {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.favorite -> {
-                val intent = Intent(this, MyFavoriteActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.saved_place -> {
-                val intent = Intent(this, SavedPlaceActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.nearby -> {
-                val intent = Intent(this, NearbyActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.log_out -> {
-                FirebaseAuth.getInstance().signOut()
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
-                true
-            }
-            else -> false
-        }
-    }
 
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -431,12 +367,6 @@ class MainActivity : BaseActivity(), RecyclerCity0nClickListener,
             }
         }
     }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-    }
-
     private fun textViewMoreOnClick(city_id: String) {
         val intent = Intent(this, DataLocationActivity::class.java)
         intent.putExtra("city_id", city_id)

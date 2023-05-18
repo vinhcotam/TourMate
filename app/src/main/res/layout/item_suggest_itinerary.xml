@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/_5sdp"
@@ -44,7 +43,6 @@
             android:background="@drawable/rounded_corners"
             android:orientation="horizontal"
             android:padding="@dimen/_5sdp">
-
             <RatingBar
                 android:id="@+id/rating_bar_vote_average"
                 style="@android:style/Widget.Holo.RatingBar.Small"
@@ -77,17 +75,15 @@
                 android:layout_marginBottom="@dimen/_5sdp"
                 android:elevation="@dimen/_5sdp"
                 android:padding="@dimen/_5sdp" />
-
-
-
         </LinearLayout>
-        <ImageView
-            android:id="@+id/image_view_delete"
-            android:layout_width="@dimen/_35sdp"
-            android:layout_height="@dimen/_35sdp"
-            android:layout_marginRight="@dimen/_5sdp"
-            android:padding="@dimen/_5sdp"
-            android:src="@drawable/ic_close" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:id="@+id/text_view_min_hours"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:id="@+id/text_view_max_hours"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
 </LinearLayout>

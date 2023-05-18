@@ -2,24 +2,22 @@ package com.example.tourmate.controller
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.tourmate.R
 import com.example.tourmate.base.BaseActivity
 import com.example.tourmate.databinding.ActivityNearbyBinding
 import com.example.tourmate.model.NearbyLocation
-import com.example.tourmate.network.BingMapsApi
+import com.example.tourmate.network.MapsApiService
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -30,8 +28,6 @@ import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.material.navigation.NavigationView
-import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -39,8 +35,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class NearbyActivity : BaseActivity(), OnMapReadyCallback,
-    NavigationView.OnNavigationItemSelectedListener {
+class NearbyActivity : BaseActivity(), OnMapReadyCallback {
     private val binding by lazy {
         ActivityNearbyBinding.inflate(layoutInflater)
     }
@@ -133,6 +128,7 @@ class NearbyActivity : BaseActivity(), OnMapReadyCallback,
     }
 
     private fun searchNearby(latitude: Double, longtitude: Double, type: String) {
+        nearbyLocationList.clear()
         progressDialog = MaterialDialog(this).apply {
             title(text = "Loading")
             message(text = "Please wait...")
@@ -144,12 +140,12 @@ class NearbyActivity : BaseActivity(), OnMapReadyCallback,
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        val nearbyApi = retrofit.create(BingMapsApi::class.java)
+        val nearbyApi = retrofit.create(MapsApiService::class.java)
         val request: Call<JsonObject> = if (type == "shop") {
-            nearbyApi.getNearby("[out:json];node(around:1500,${latitude},${longtitude})[shop];out;")
+            nearbyApi.getNearby("[out:json];node(around:1000,${latitude},${longtitude})[shop];out;")
 
         } else {
-            nearbyApi.getNearby("[out:json];node(around:1500,${latitude},${longtitude})[amenity=${type}];out;")
+            nearbyApi.getNearby("[out:json];node(around:1000,${latitude},${longtitude})[amenity=${type}];out;")
         }
         request
             .enqueue(object : Callback<JsonObject> {
@@ -179,29 +175,14 @@ class NearbyActivity : BaseActivity(), OnMapReadyCallback,
                                 }
                                 if (name != "") {
                                     val nearby = NearbyLocation(lat, lon, name, amenity)
-                                    nearbyLocationList.clear()
                                     nearbyLocationList.add(nearby)
                                 } else {
-                                    if (type == "fuel") {
-                                        val operatorJsonElement =
-                                            node.getAsJsonObject("tags").get("operator")
-                                        val operator = if (operatorJsonElement != null) {
-                                            nameJsonElement.asString
-                                        } else {
-                                            ""
-                                        }
-                                        if (operator != "") {
-                                            val nearby = NearbyLocation(lat, lon, operator, amenity)
-                                            nearbyLocationList.add(nearby)
-                                        } else {
-                                            val add = node.getAsJsonObject("tags")
-                                                .get("addr:street").asString
-                                            val nearby = NearbyLocation(lat, lon, add, amenity)
-                                            nearbyLocationList.add(nearby)
-
-                                        }
-
-
+                                    val operatorJsonElement =
+                                        node.getAsJsonObject("tags").get("operator")
+                                    if (operatorJsonElement != null) {
+                                        val operator = operatorJsonElement.asString
+                                        val nearby = NearbyLocation(lat, lon, operator, amenity)
+                                        nearbyLocationList.add(nearby)
                                     }
                                 }
                                 map?.clear()
@@ -255,14 +236,14 @@ class NearbyActivity : BaseActivity(), OnMapReadyCallback,
                 .position(LatLng(currentLocation!!.latitude, currentLocation!!.longitude))
         )
         map?.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation!!, 15f))
-        val lightBlue = ContextCompat.getColor(this, R.color.light_blue)
+        val iconColor = ContextCompat.getColor(this, R.color.fire_brick)
         for (i in nearbyLocationList) {
             map?.addMarker(
                 MarkerOptions()
                     .position(LatLng(i.lat, i.lon))
                     .title(i.name)
                     .snippet(type)
-                    .icon(bitmapDescriptorFromVector(this, iconMarker, lightBlue))
+                    .icon(bitmapDescriptorFromVector(this, iconMarker, iconColor))
             )
         }
 
@@ -292,38 +273,13 @@ class NearbyActivity : BaseActivity(), OnMapReadyCallback,
         vectorDrawable.draw(canvas)
         return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
+    override fun onBackPressed() {
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
 
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.home -> {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.favorite -> {
-                val intent = Intent(this, MyFavoriteActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.saved_place -> {
-                val intent = Intent(this, SavedPlaceActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.nearby -> {
-                val intent = Intent(this, NearbyActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.log_out -> {
-                FirebaseAuth.getInstance().signOut()
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
-                true
-            }
-            else -> false
         }
     }
+
 }

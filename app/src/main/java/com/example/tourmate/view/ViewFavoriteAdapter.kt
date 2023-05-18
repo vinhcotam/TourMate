@@ -8,7 +8,6 @@ import com.bumptech.glide.Glide
 import com.example.tourmate.R
 import com.example.tourmate.controller.interfaces.RecyclerFavoriteOnClickListener
 import com.example.tourmate.databinding.ItemMyFavoriteBinding
-import com.example.tourmate.model.DataLocation
 import com.example.tourmate.model.ViewFavoriteLocation
 
 class ViewFavoriteAdapter(

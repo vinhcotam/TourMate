@@ -81,8 +81,8 @@
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/light_blue"
                         android:checkable="false"
-                        android:text="@string/restaurant"
                         android:onClick="onClickNearbySearch"
+                        android:text="@string/restaurant"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_12ssp"
                         app:chipIcon="@drawable/ic_food" />

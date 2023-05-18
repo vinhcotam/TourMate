@@ -5,14 +5,13 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.tourmate.R
@@ -20,22 +19,15 @@ import com.example.tourmate.base.BaseActivity
 import com.example.tourmate.controller.interfaces.RecyclerSavedPlaceOnClickListener
 import com.example.tourmate.databinding.ActivitySavedPlaceBinding
 import com.example.tourmate.model.*
-import com.example.tourmate.network.BingMapsApi
-import com.example.tourmate.network.DistanceMatrixService
+import com.example.tourmate.network.MapsApiService
 import com.example.tourmate.network.RetrofitInstance
 import com.example.tourmate.utilities.Constants.Companion.BING_MAP_API_KEY
 import com.example.tourmate.view.ViewSavedPlaceAdapter
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
-import com.google.gson.JsonObject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
-import org.json.JSONObject
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
@@ -43,21 +35,21 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener,
-    NavigationView.OnNavigationItemSelectedListener {
+class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
     private val binding by lazy {
         ActivitySavedPlaceBinding.inflate(layoutInflater)
     }
     private var savedPlaceList = ArrayList<ViewSavedPlace>()
+    private var findShortestList = ArrayList<ViewSavedPlace>()
     private lateinit var auth: FirebaseAuth
     private lateinit var viewSavedPlaceAdapter: ViewSavedPlaceAdapter
     private var distanceList = ArrayList<DistanceClass>()
     private var progressDialog: MaterialDialog? = null
-    private var locationList = ArrayList<Location>()
+    private var locationList = ArrayList<LocationClass>()
     private var currentLatitude: Double? = 0.0
     private var currentLongtitude: Double? = 0.0
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var currentLocation: Location? = null
+    private var currentLocation: LocationClass? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +68,7 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener,
         binding.navigationView.setNavigationItemSelectedListener(this)
         binding.navigationView.menu.findItem(R.id.saved_place).isChecked = true
         savedPlaceList = ArrayList()
+        findShortestList = ArrayList()
         locationList = ArrayList()
         progressDialog = MaterialDialog(this).apply {
             title(text = "Loading")
@@ -137,12 +130,11 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener,
         }
         task.addOnSuccessListener {
             if (it != null) {
-                currentLocation = Location(0, it.latitude, it.longitude)
+                currentLocation = LocationClass(0, it.latitude, it.longitude, "My Location")
                 currentLatitude = it.latitude
                 currentLongtitude = it.longitude
                 locationList.clear()
-                Log.d("testttttt", currentLocation.toString())
-                locationList.add(currentLocation as Location)
+                locationList.add(currentLocation as LocationClass)
                 if (currentLatitude != 0.0 && currentLongtitude != 0.0) {
                     getDataDistance(savedPlaceList)
                 }
@@ -151,13 +143,14 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener,
         }
     }
 
-
-
     private fun filterSavedPlaceList(newText: String?) {
         if (!newText.isNullOrEmpty()) {
             val filteredList = ArrayList<ViewSavedPlace>()
             for (i in savedPlaceList) {
-                if (i.english_name.lowercase(Locale.ROOT).contains(newText) || i.location.lowercase(Locale.ROOT).contains(newText)) {
+                if (i.english_name.lowercase(Locale.ROOT).contains(newText) || i.location.lowercase(
+                        Locale.ROOT
+                    ).contains(newText)
+                ) {
                     filteredList.add(i)
                 }
             }
@@ -191,8 +184,9 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener,
                             savedPlaceList.clear()
                             response.body()?.let {
                                 savedPlaceList.addAll(it)
-                                savedPlaceList.sortBy { it.english_name }
                             }
+                            Log.d("ketquaaa1", savedPlaceList.toString())
+
                             locationList.clear()
                             distanceList.clear()
                             viewSavedPlaceAdapter.notifyDataSetChanged()
@@ -211,7 +205,8 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener,
                         call: Call<List<ViewSavedPlace>>,
                         t: Throwable
                     ) {
-                        Toast.makeText(this@SavedPlaceActivity, t.toString(), Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@SavedPlaceActivity, t.toString(), Toast.LENGTH_LONG)
+                            .show()
                         progressDialog?.dismiss()
 
                     }
@@ -300,45 +295,12 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener,
         dialog.show()
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.home -> {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.favorite -> {
-                val intent = Intent(this, MyFavoriteActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.saved_place -> {
-                val intent = Intent(this, SavedPlaceActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.nearby ->{
-                val intent = Intent(this, NearbyActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            R.id.log_out -> {
-                FirebaseAuth.getInstance().signOut()
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
-                true
-            }
-            else -> false
-        }
-    }
-
-    fun insertDistance(startLocation: Location, endLocation: Location) {
+    fun insertDistance(startLocation: LocationClass, endLocation: LocationClass) {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://dev.virtualearth.net")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        val distanceMatrixService = retrofit.create(DistanceMatrixService::class.java)
+        val distanceMatrixService = retrofit.create(MapsApiService::class.java)
         val origin = "${startLocation.latitude},${startLocation.longtitude}"
         val destination = "${endLocation.latitude},${endLocation.longtitude}"
         val travelMode = "driving"
@@ -371,7 +333,7 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener,
                             distanceList.add(distance)
                         }
                     }
-                    Log.d("checkdistance", distanceList.toString())
+                    Log.d("ketqua", distanceList.toString())
                     if (startLocation.id != 0 && endLocation.id != 0) {
                         val api = RetrofitInstance.api
                         val call = distanceInMeters?.let {
@@ -388,16 +350,18 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener,
                             ) {
                                 if (response.isSuccessful) {
                                     val responseData = response.body()?.string()
+                                    Log.d("chceckecke", response.toString())
+                                    Log.d("chceckecke", responseData.toString())
+
                                     if (responseData != null && responseData == "success") {
-                                        Log.d("checkkkaaaa", response.toString())
-                                    } else {
+                                    }
+                                    else {
                                         Toast.makeText(
                                             this@SavedPlaceActivity,
                                             getString(R.string.fail),
                                             Toast.LENGTH_LONG
                                         ).show()
                                     }
-                                    Log.d("checkkkaaaa", responseData.toString())
                                 }
                             }
 
@@ -422,14 +386,14 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener,
 
     private fun getDataDistance(savedPlaceList: List<ViewSavedPlace>) {
         for (viewSavedPlace in savedPlaceList) {
-            val location = Location(
+            val location = LocationClass(
                 id = viewSavedPlace.location_id,
                 latitude = viewSavedPlace.latitude.toDouble(),
-                longtitude = viewSavedPlace.longtitude.toDouble()
+                longtitude = viewSavedPlace.longtitude.toDouble(),
+                english_name = viewSavedPlace.english_name
             )
             locationList.add(location)
         }
-
         for (i in 0 until locationList.size - 1) {
             for (j in i + 1 until locationList.size) {
                 val api = RetrofitInstance.api
@@ -446,13 +410,11 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener,
                                 insertDistance(locationList[i], locationList[j])
                             } else {
                                 response.body()?.let {
-                                    distanceList.clear()
                                     if (locationList[i].id != locationList[j].id) {
                                         distanceList.addAll(it)
                                     }
                                 }
                             }
-                            Log.d("checkdistance1", distanceList.toString())
 
                         }
                     }
@@ -472,30 +434,99 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener,
             }
         }
 
-//        for (i in 0 until savedPlaceList.size - 1) {
-//            for (j in i + 1 until savedPlaceList.size) {
-//                val coroutineScope = CoroutineScope(Dispatchers.Main)
-//                coroutineScope.launch(Dispatchers.IO) {
-//                    val origins = "${savedPlaceList[i].latitude},${savedPlaceList[i].longtitude}"
-//                    val destinations =
-//                        "${savedPlaceList[j].latitude},${savedPlaceList[j].longtitude}"
-//                    val apiKey = DISTANCE_MATRIX_API_KEY
-//                    val urlString =
-//                        "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=$origins&destinations=$destinations&key=$apiKey"
-//
-//                    val result = URL(urlString).readText()
-//                    val jsonObj = JSONObject(result)
-//                    Log.d("checkkkkk", urlString)
-//                    val rows = jsonObj.getJSONArray("rows")
-//                    val elements = rows.getJSONObject(0).getJSONArray("elements")
-//                    val distance =
-//                        elements.getJSONObject(0).getJSONObject("distance").getString("text")
-//                    Log.d("checkkkkk", distance.toString())
-//                    Log.d("checkkkkk", "distance " + i + "to " + j + " " + distance.toString())
-//
-//                }
-//            }
-//        }
+    }
+
+    fun onClickSavedPlace(view: View) {
+        when (view) {
+            binding.btnStartItinerary -> {
+                if (savedPlaceList.isNotEmpty()) {
+                    progressDialog = MaterialDialog(this).apply {
+                        title(text = "Loading")
+                        message(text = "Please wait...")
+                        cancelable(false)
+                        show()
+                    }
+                    greedyTravelingSalesman(0, distanceList)
+                    val intent = Intent(this, DisplaySuggestItineraryActivity::class.java)
+                    val gson = Gson()
+                    val jsonStringFindShortestList = gson.toJson(findShortestList)
+                    val jsonStringDistanceList = gson.toJson(distanceList)
+                    intent.putExtra("myList", jsonStringFindShortestList)
+                    intent.putExtra("distanceList", jsonStringDistanceList)
+                    findShortestList.clear()
+                    distanceList.clear()
+                    startActivity(intent)
+                }
+
+            }
+        }
+    }
+    private fun greedyTravelingSalesman(startId: Int, distanceList: ArrayList<DistanceClass>) {
+        val visited = mutableListOf(startId)
+        var currentId = startId
+        while (visited.size < distanceList.size + 1) {
+            var nearestId: Int? = null
+            var minDistance = Double.MAX_VALUE
+            for (distance in distanceList) {
+                if (!visited.contains(distance.location_end_id)) {
+                    if (distance.location_start_id == currentId && distance.distance < minDistance) {
+                        nearestId = distance.location_end_id
+                        minDistance = distance.distance
+                    } else if (distance.location_end_id == currentId && distance.distance < minDistance) {
+                        nearestId = distance.location_start_id
+                        minDistance = distance.distance
+                    }
+                }
+            }
+            if (nearestId != null) {
+                visited.add(nearestId)
+                currentId = nearestId
+            } else {
+                break
+            }
+        }
+
+        if (visited.size == distanceList.size + 1) {
+            visited.add(startId)
+        }
+        val missingPoints = savedPlaceList.map { it.location_id } - visited.toSet()
+        visited.addAll(missingPoints)
+        val currentLocation =
+            ViewSavedPlace(
+                0,
+                "",
+                0,
+                "My Location",
+                "a",
+                "01",
+                currentLatitude.toString(),
+                currentLongtitude.toString(),
+                "1",
+                1,
+                "",
+                "My Location",
+                1.0,
+                2.0
+            )
+        findShortestList.add(currentLocation)
+        for (i in visited) {
+            for (j in savedPlaceList) {
+                if (i != 0) {
+                    if (i == j.location_id) {
+                        findShortestList.add(j)
+                    }
+                }
+            }
+        }
+        progressDialog?.dismiss()
+    }
+    override fun onBackPressed() {
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+
+        }
     }
 
 }
