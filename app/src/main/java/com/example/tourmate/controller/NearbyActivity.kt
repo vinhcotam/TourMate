@@ -186,7 +186,6 @@ class NearbyActivity : BaseActivity(), OnMapReadyCallback {
                                     }
                                 }
                                 map?.clear()
-                                Log.d("ádaf", response.toString())
 
                                 addMarker(nearbyLocationList, type)
                             }
@@ -202,7 +201,7 @@ class NearbyActivity : BaseActivity(), OnMapReadyCallback {
                 }
 
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                    Log.d("neahar", t.toString())
+                    Log.d("fail", t.toString())
                 }
             })
 
@@ -251,11 +250,7 @@ class NearbyActivity : BaseActivity(), OnMapReadyCallback {
 
     }
 
-    private fun bitmapDescriptorFromVector(
-        context: Context,
-        vectorResId: Int,
-        color: Int
-    ): BitmapDescriptor? {
+    private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int, color: Int): BitmapDescriptor? {
         val vectorDrawable = ContextCompat.getDrawable(context, vectorResId) ?: return null
         vectorDrawable.setBounds(
             0,

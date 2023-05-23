@@ -39,9 +39,9 @@ class ViewSavedPlaceAdapter(
             binding.imgLocation.setOnClickListener {
                 listener?.onItemClick(item)
             }
-            binding.imageViewDelete.setOnClickListener {
-                listener?.onDeleteItemClick(item)
-            }
+//            binding.imageViewDelete.setOnClickListener {
+//                listener?.onDeleteItemClick(item)
+//            }
         }
     }
 

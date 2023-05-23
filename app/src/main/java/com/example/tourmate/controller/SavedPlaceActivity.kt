@@ -12,7 +12,9 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.tourmate.R
 import com.example.tourmate.base.BaseActivity
@@ -25,6 +27,7 @@ import com.example.tourmate.utilities.Constants.Companion.BING_MAP_API_KEY
 import com.example.tourmate.view.ViewSavedPlaceAdapter
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import okhttp3.ResponseBody
@@ -50,7 +53,6 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
     private var currentLongtitude: Double? = 0.0
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var currentLocation: LocationClass? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -109,6 +111,40 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
             }
             true
         }
+        swipeItem()
+    }
+
+    private fun swipeItem() {
+        val simpleItemTouchCallback = object :
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val deleteSavedPlace = savedPlaceList[viewHolder.position]
+                savedPlaceList.removeAt(viewHolder.adapterPosition)
+                viewSavedPlaceAdapter.notifyItemRemoved(viewHolder.adapterPosition)
+                Snackbar.make(
+                    binding.recycleViewSavedPlace,
+                    "Delete " + deleteSavedPlace.english_name,
+                    Snackbar.LENGTH_LONG
+                )
+                    .setAction("Undo", View.OnClickListener {
+                        savedPlaceList.add(position, deleteSavedPlace)
+                        viewSavedPlaceAdapter.notifyItemInserted(position)
+                    }).show()
+
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)
+        itemTouchHelper.attachToRecyclerView(binding.recycleViewSavedPlace)
     }
 
     private fun fetchLocation() {
@@ -185,8 +221,6 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
                             response.body()?.let {
                                 savedPlaceList.addAll(it)
                             }
-                            Log.d("ketquaaa1", savedPlaceList.toString())
-
                             locationList.clear()
                             distanceList.clear()
                             viewSavedPlaceAdapter.notifyDataSetChanged()
@@ -333,7 +367,6 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
                             distanceList.add(distance)
                         }
                     }
-                    Log.d("ketqua", distanceList.toString())
                     if (startLocation.id != 0 && endLocation.id != 0) {
                         val api = RetrofitInstance.api
                         val call = distanceInMeters?.let {
@@ -350,12 +383,8 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
                             ) {
                                 if (response.isSuccessful) {
                                     val responseData = response.body()?.string()
-                                    Log.d("chceckecke", response.toString())
-                                    Log.d("chceckecke", responseData.toString())
-
                                     if (responseData != null && responseData == "success") {
-                                    }
-                                    else {
+                                    } else {
                                         Toast.makeText(
                                             this@SavedPlaceActivity,
                                             getString(R.string.fail),
@@ -453,14 +482,17 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
                     val jsonStringDistanceList = gson.toJson(distanceList)
                     intent.putExtra("myList", jsonStringFindShortestList)
                     intent.putExtra("distanceList", jsonStringDistanceList)
+                    savedPlaceList.clear()
                     findShortestList.clear()
                     distanceList.clear()
                     startActivity(intent)
+                    finish()
                 }
 
             }
         }
     }
+
     private fun greedyTravelingSalesman(startId: Int, distanceList: ArrayList<DistanceClass>) {
         val visited = mutableListOf(startId)
         var currentId = startId
@@ -520,6 +552,7 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
         }
         progressDialog?.dismiss()
     }
+
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)

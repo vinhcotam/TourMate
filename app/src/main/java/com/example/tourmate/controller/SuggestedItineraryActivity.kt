@@ -60,7 +60,6 @@ class SuggestedItineraryActivity : BaseActivity(), OnMapReadyCallback {
         val jsonString = intent.getStringExtra("myList")
         val gson = Gson()
         val type = object : TypeToken<ArrayList<ViewSavedPlace>>() {}.type
-        suggestList.clear()
         suggestList = gson.fromJson(jsonString, type)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         val mapFragment =
@@ -82,6 +81,9 @@ class SuggestedItineraryActivity : BaseActivity(), OnMapReadyCallback {
                 )
                     .title(i.english_name)
                     .snippet("Step $position")
+
+//                    .icon(i.image_url as BitmapDescriptor)
+
             )
         }
 
@@ -93,9 +95,9 @@ class SuggestedItineraryActivity : BaseActivity(), OnMapReadyCallback {
                 ), 15f
             )
         )
+//        progressDialog?.dismiss()
         drawRoute(suggestList)
     }
-
     private fun drawRoute(suggestList: ArrayList<ViewSavedPlace>) {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://maps.googleapis.com")
@@ -136,7 +138,6 @@ class SuggestedItineraryActivity : BaseActivity(), OnMapReadyCallback {
                             for (result in resultList) {
                                 resultMap[result.start_name] = result
                             }
-
                             var currentStartName = "My Location"
                             while (resultMap.containsKey(currentStartName)) {
                                 val currentResult = resultMap[currentStartName]
@@ -162,7 +163,6 @@ class SuggestedItineraryActivity : BaseActivity(), OnMapReadyCallback {
                                     polylineOptions.add(LatLng(point.latitude, point.longitude))
                                 }
                             }
-
                             googleMap.addPolyline(polylineOptions)
                             progressDialog?.dismiss()
 
@@ -183,7 +183,6 @@ class SuggestedItineraryActivity : BaseActivity(), OnMapReadyCallback {
             })
         }
     }
-
 
     override fun onBackPressed() {
         suggestList.clear()

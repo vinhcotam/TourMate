@@ -1,10 +1,8 @@
 package com.example.tourmate.controller
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
@@ -21,13 +19,8 @@ import com.example.tourmate.model.ErrorResponse
 import com.example.tourmate.model.ViewFavoriteLocation
 import com.example.tourmate.network.RetrofitInstance
 import com.example.tourmate.view.ViewFavoriteAdapter
-import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -96,7 +89,6 @@ class MyFavoriteActivity : BaseActivity(), RecyclerFavoriteOnClickListener {
 
                 viewFavoriteAdapter.notifyDataSetChanged()
             }
-            Log.d("eizeeez", favoriteList.size.toString())
             true
         }
     }
@@ -143,7 +135,7 @@ class MyFavoriteActivity : BaseActivity(), RecyclerFavoriteOnClickListener {
                             }
                             Log.d("img_url", response.body().toString())
                             viewFavoriteAdapter.notifyDataSetChanged()
-                            if (favoriteList.isNullOrEmpty()) {
+                            if (favoriteList.isEmpty()) {
                                 binding.textViewEmptyNotice.visibility = View.VISIBLE
                             } else {
                                 binding.textViewEmptyNotice.visibility = View.GONE

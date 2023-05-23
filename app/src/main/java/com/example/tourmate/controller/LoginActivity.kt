@@ -1,7 +1,6 @@
 package com.example.tourmate.controller
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.tourmate.R
 import com.example.tourmate.base.BaseActivity

@@ -30,7 +30,8 @@ class SuggestItineraryAdapter(
                 .placeholder(R.drawable.logo)
                 .into(binding.imgLocation)
             binding.textViewMinHours.text = "Min hours : ${item.min_hour}"
-            binding.textViewMaxHours.text = "Max hours : ${item.max_hour}"
+//            binding.textViewMaxHours.text = "Max hours : ${item.max_hour}"
+            binding.textViewMaxHours.text = "Max hours : ${item.location_id}"
 
         }
     }
