@@ -3,6 +3,7 @@ package com.example.tourmate.view
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.tourmate.R
@@ -29,10 +30,9 @@ class SuggestItineraryAdapter(
                 .centerCrop()
                 .placeholder(R.drawable.logo)
                 .into(binding.imgLocation)
-            binding.textViewMinHours.text = "Min hours : ${item.min_hour}"
-//            binding.textViewMaxHours.text = "Max hours : ${item.max_hour}"
-            binding.textViewMaxHours.text = "Max hours : ${item.location_id}"
-
+            binding.textViewMinHours.text = "Min hours : ${item.min_hour} hours"
+            binding.textViewMaxHours.text = "Max hours : ${item.max_hour} hours"
+            binding.linearLayoutItem.startAnimation(AnimationUtils.loadAnimation(itemView.context, R.anim.scale))
         }
     }
 

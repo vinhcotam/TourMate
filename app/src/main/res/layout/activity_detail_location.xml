@@ -74,6 +74,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_5sdp"
                             android:text="@string/location_name"
+                            android:textColor="@color/black"
                             android:textSize="@dimen/_15sdp" />
 
                         <TextView
@@ -82,6 +83,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_10sdp"
                             android:text="@string/location"
+                            android:textColor="@color/black"
                             android:textSize="@dimen/_10sdp" />
 
                         <LinearLayout
@@ -123,6 +125,7 @@
                                 android:layout_marginTop="@dimen/_5sdp"
                                 android:layout_marginBottom="@dimen/_5sdp"
                                 android:elevation="@dimen/_5sdp"
+                                android:textColor="@color/black"
                                 android:padding="@dimen/_5sdp" />
 
                         </LinearLayout>
@@ -170,12 +173,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/introduce"
+                        android:textColor="@color/black"
                         android:textSize="@dimen/_15sdp" />
 
                     <TextView
                         android:justificationMode="inter_word"
                         android:id="@+id/text_view_description_location"
                         android:layout_width="match_parent"
+                        android:textColor="@color/black"
                         android:layout_height="wrap_content" />
 
                 </LinearLayout>

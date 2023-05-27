@@ -118,7 +118,7 @@ class MainActivity : BaseActivity(), RecyclerCity0nClickListener,
         myJob = GlobalScope.launch {
             while (true) {
                 getTop10Location()
-                delay(3000)
+                delay(10000)
             }
         }
         getData()

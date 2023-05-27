@@ -41,6 +41,7 @@
     <string name="no">No</string>
     <string name="saved_place">Saved Place</string>
     <string name="start_build_your_itinerary">Build Itinerary</string>
+    <string name="auto">Auto sort</string>
     <string name="top_5_recommend_for_you">Top 5 recommend for you</string>
     <string name="neaby_me">Neaby Me</string>
     <string name="pharmacy">pharmacy</string>
@@ -59,5 +60,6 @@
     <string name="edit_itinerary">Edit Itinerary</string>
     <string name="recalculation">Recalculation</string>
     <string name="view_on_map">View on Map</string>
-
+    <string name="save_plan">Save plan</string>
+    <string name="refresh">Refresh</string>
 </resources>

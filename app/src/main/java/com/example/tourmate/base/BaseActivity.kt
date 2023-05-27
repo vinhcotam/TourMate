@@ -9,6 +9,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.example.tourmate.R
 import com.example.tourmate.controller.*
+import com.example.tourmate.controller.MyHistoryActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 
@@ -76,6 +77,11 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
                 finish()
+                true
+            }
+            R.id.history ->{
+                val intent = Intent(this, MyHistoryActivity::class.java)
+                startActivity(intent)
                 true
             }
             else -> false

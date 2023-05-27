@@ -2,7 +2,9 @@ package com.example.tourmate.view
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tourmate.R
 import com.example.tourmate.controller.interfaces.RecyclerCity0nClickListener
 import com.example.tourmate.databinding.ItemDataCityBinding
 import com.example.tourmate.model.DataCity
@@ -19,6 +21,8 @@ class DataCityAdapter(private var items: List<DataCity>) :
             binding.buttonCity.setOnClickListener {
                 listener?.onItemClick(item)
             }
+            binding.linearLayoutItem.startAnimation(AnimationUtils.loadAnimation(itemView.context, R.anim.scale))
+
         }
 
 

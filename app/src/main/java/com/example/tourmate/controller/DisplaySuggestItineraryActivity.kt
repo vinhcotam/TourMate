@@ -1,7 +1,6 @@
 package com.example.tourmate.controller
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -17,7 +16,7 @@ import com.example.tourmate.model.ViewSavedPlace
 import com.example.tourmate.view.SuggestItineraryAdapter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.util.Collections
+import java.util.*
 
 class DisplaySuggestItineraryActivity : BaseActivity() {
     private val binding by lazy {
@@ -35,7 +34,6 @@ class DisplaySuggestItineraryActivity : BaseActivity() {
     private lateinit var suggestItineraryAdapter: SuggestItineraryAdapter
     private var differences = ArrayList<Int>()
     private var commonList = ArrayList<Int>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -80,8 +78,6 @@ class DisplaySuggestItineraryActivity : BaseActivity() {
         for (i in editList) {
             arrayListSuggestId.add(i.location_id)
         }
-        Log.d("assdhfhj", suggestList.toString())
-
         suggestItineraryAdapter = SuggestItineraryAdapter(this, editList)
         binding.recycleSuggestPlace.setHasFixedSize(true)
         binding.recycleSuggestPlace.layoutManager = LinearLayoutManager(this)
@@ -93,9 +89,7 @@ class DisplaySuggestItineraryActivity : BaseActivity() {
         when (view) {
             binding.buttonRecalculation -> {
                 if (differences.isNotEmpty()) {
-
                     greedyTravelingSalesman(differences[0], distanceList, commonList)
-                    Log.d("assdhfhj12341111", findShortestList.toString())
                     val editFindShortestList = ArrayList(findShortestList)
                     val iterator = editFindShortestList.iterator()
                     while (iterator.hasNext()) {
@@ -113,13 +107,13 @@ class DisplaySuggestItineraryActivity : BaseActivity() {
                     binding.recycleSuggestPlace.adapter = suggestItineraryAdapter
                 }
             }
+
             binding.buttonViewMap -> {
                 if (differences.isNotEmpty()) {
                     val currentLocation = ViewSavedPlace(
                         0,
                         "",
                         0,
-                        "My Location",
                         "a",
                         "01",
                         currentLatitude.toString(),
@@ -136,7 +130,6 @@ class DisplaySuggestItineraryActivity : BaseActivity() {
                     val gson = Gson()
                     val jsonStringFindShortestList = gson.toJson(findShortestList)
                     intent.putExtra("myList", jsonStringFindShortestList)
-                    Log.d("áddsaf", jsonStringFindShortestList.toString())
                     startActivity(intent)
                 } else {
                     val intent = Intent(this, SuggestedItineraryActivity::class.java)
@@ -144,7 +137,6 @@ class DisplaySuggestItineraryActivity : BaseActivity() {
                     val jsonStringFindShortestList = gson.toJson(suggestList)
                     val jsonStringDistanceList = gson.toJson(distanceList)
                     intent.putExtra("myList", jsonStringFindShortestList)
-                    Log.d("áddsaf", jsonStringFindShortestList.toString())
                     intent.putExtra("distanceList", jsonStringDistanceList)
                     startActivity(intent)
                 }
@@ -174,16 +166,11 @@ class DisplaySuggestItineraryActivity : BaseActivity() {
                 for (i in editList) {
                     arrayListEditId.add(i.location_id)
                 }
+                if (arrayListSuggestId[0] == 0) {
+                    arrayListSuggestId.removeAt(0)
+                }
                 findDifferences(arrayListSuggestId, arrayListEditId)
 
-                if (differences.isNotEmpty()) {
-                    for (i in suggestList) {
-                        if (i.location_id == differences[0]) {
-                            Log.d("assdhfhj1234", i.toString())
-
-                        }
-                    }
-                }
                 return true
             }
 
@@ -206,7 +193,6 @@ class DisplaySuggestItineraryActivity : BaseActivity() {
         }
 
         val firstDifference = differences.firstOrNull()
-        Log.d("assdhfhj1234111", firstDifference.toString())
 
         if (firstDifference != null) {
             val index = list2.indexOf(firstDifference)
@@ -221,35 +207,30 @@ class DisplaySuggestItineraryActivity : BaseActivity() {
     private fun greedyTravelingSalesman(
         startId: Int,
         distanceList: ArrayList<DistanceClass>,
-        commonList: ArrayList<Int>
+        common: ArrayList<Int>
     ) {
         val visited = mutableListOf<Int>()
-        if (commonList.isNotEmpty()) {
-            for (i in commonList) {
+        visited.add(0)
+        if (common.isNotEmpty()) {
+            for (i in common) {
                 visited.add(i)
             }
         }
         visited.add(startId)
-//        val visited = mutableListOf(startId)
-
         var currentId = startId
-
         while (visited.size < distanceList.size + 1) {
             var nearestId: Int? = null
             var minDistance = Double.MAX_VALUE
             for (distance in distanceList) {
-                if (!commonList.contains(distance.location_end_id)) {
-                    if (!visited.contains(distance.location_end_id)) {
-                        if (distance.location_start_id == currentId && distance.distance < minDistance) {
-                            nearestId = distance.location_end_id
-                            minDistance = distance.distance
-                        } else if (distance.location_end_id == currentId && distance.distance < minDistance) {
-                            nearestId = distance.location_start_id
-                            minDistance = distance.distance
-                        }
+                if (!visited.contains(distance.location_end_id)) {
+                    if (distance.location_start_id == currentId && distance.distance < minDistance) {
+                        nearestId = distance.location_end_id
+                        minDistance = distance.distance
+                    } else if (distance.location_end_id == currentId && distance.distance < minDistance) {
+                        nearestId = distance.location_start_id
+                        minDistance = distance.distance
                     }
                 }
-
             }
             if (nearestId != null) {
                 visited.add(nearestId)
@@ -258,7 +239,6 @@ class DisplaySuggestItineraryActivity : BaseActivity() {
                 break
             }
         }
-
         if (visited.size == distanceList.size + 1) {
             visited.add(startId)
         }
@@ -268,7 +248,6 @@ class DisplaySuggestItineraryActivity : BaseActivity() {
             0,
             "",
             0,
-            "My Location",
             "a",
             "01",
             currentLatitude.toString(),
@@ -281,6 +260,8 @@ class DisplaySuggestItineraryActivity : BaseActivity() {
             2.0
         )
         findShortestList.add(currentLocation)
+        arrayListSuggestId.clear()
+        arrayListEditId.clear()
         val uniqueElements = visited.distinct()
         val test = ArrayList<ViewSavedPlace>()
         for (i in uniqueElements) {
@@ -291,11 +272,16 @@ class DisplaySuggestItineraryActivity : BaseActivity() {
                     }
                 }
             }
+            if (i != 0) {
+                arrayListSuggestId.add(i)
+                arrayListEditId.add(i)
+            }
+
+
         }
         findShortestList = test.distinct() as ArrayList<ViewSavedPlace>
-        Log.d("ádfggewegfg", findShortestList.toString())
+//        arrayListSuggestId.add(0,0)
     }
-
 
 }
 

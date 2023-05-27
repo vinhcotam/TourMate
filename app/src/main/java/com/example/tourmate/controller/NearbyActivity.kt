@@ -155,7 +155,6 @@ class NearbyActivity : BaseActivity(), OnMapReadyCallback {
                 ) {
                     if (response.isSuccessful) {
                         val nodes = response.body()?.getAsJsonArray("elements")
-                        Log.d("checkapi", response.toString())
                         if (nodes?.size()!! > 0) {
                             for (i in 0 until nodes.size()) {
                                 val node = nodes.get(i).asJsonObject

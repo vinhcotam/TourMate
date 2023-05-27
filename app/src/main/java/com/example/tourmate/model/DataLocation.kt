@@ -4,7 +4,6 @@ import kotlin.math.sqrt
 
 data class DataLocation(
     var id: Int,
-    var name: String,
     var location: String,
     var latitude: String,
     var longtitude: String,

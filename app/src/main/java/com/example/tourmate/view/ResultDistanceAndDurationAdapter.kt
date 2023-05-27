@@ -14,6 +14,7 @@ class ResultDistanceAndDurationAdapter(private var items: List<ResultDistanceAnd
             binding.textViewStartEndLocation.text = "${item.start_name } to ${item.end_name }"
             binding.textViewDistance.text = "Distance: ${item.distance}"
             binding.textViewDuration.text = "Duration:  ${item.duration}"
+
         }
 
 

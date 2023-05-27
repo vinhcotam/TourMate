@@ -3,6 +3,7 @@ package com.example.tourmate.view
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.tourmate.R
@@ -33,6 +34,8 @@ class DataLocationAdapter(private val context: Context, private var items: List<
                 listener?.onItemClick(item)
 
             }
+            binding.linearLayoutItem.startAnimation(AnimationUtils.loadAnimation(itemView.context, R.anim.scale))
+
         }
     }
     fun setOnItemClickListener(listener: RecyclerLocation0nClickListener?) {

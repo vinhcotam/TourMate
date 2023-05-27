@@ -6,13 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".controller.DisplaySuggestItineraryActivity"
-    tools:openDrawer="start">
+    tools:openDrawer="start"
+    tools:context=".controller.MyFavoriteActivity">
 
     <LinearLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="@dimen/_8sdp"
         android:orientation="vertical">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -23,33 +24,44 @@
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="wrap_content"
+                app:titleTextColor="@color/white"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/light_blue"
-                android:theme="@style/ThemeOverlay.AppCompat.Light"
-                app:titleTextColor="@color/white" />
+                android:theme="@style/ThemeOverlay.AppCompat.Light">
 
+            </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
-        <TextView
-            android:layout_width="match_parent"
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_view"
             android:layout_margin="@dimen/_5sdp"
-            android:textSize="@dimen/_15ssp"
-            android:text="This is Suggest Itinerary for you"
-            android:layout_height="wrap_content"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/searchview_background"
+            android:iconifiedByDefault="false"
+            android:queryHint="Search..."
+            android:typeface="sans" />
+
+        <TextView
+            android:id="@+id/text_view_empty_notice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/no_data_found"
+            android:visibility="invisible" />
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycleSuggestPlace"
+                android:id="@+id/recycle_history"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:longClickable="true"
+                android:layout_margin="@dimen/_5sdp"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/buttonContainer"
+                app:layout_constraintBottom_toTopOf="@id/linearLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_margin="@dimen/_8sdp" />
-
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="2" />
             <LinearLayout
                 android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
@@ -90,36 +102,9 @@
                     android:padding="8dp"
                     android:src="@drawable/logo" />
             </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/buttonContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                app:layout_constraintTop_toBottomOf="@id/recycleSuggestPlace"
-                app:layout_constraintBottom_toTopOf="@id/linearLayout"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_margin="@dimen/_8sdp">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_recalculation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="onClickSuggest"
-                    android:layout_marginRight="@dimen/_5sdp"
-                    android:text="@string/recalculation" />
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_view_map"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="onClickSuggest"
-                    android:text="@string/view_on_map"
-                    android:layout_marginLeft="@dimen/_5sdp"
-                    android:layout_marginEnd="@dimen/_8sdp" />
-            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -128,6 +113,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/menu_navigation" />
+        app:menu="@menu/menu_navigation">
+
+    </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -54,22 +54,12 @@
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycleViewSavedPlace"
+                android:id="@+id/recycleSavedPlace"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:longClickable="true"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/btnStartItinerary"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_margin="@dimen/_8sdp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnStartItinerary"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:onClick="onClickSavedPlace"
-                android:text="@string/start_build_your_itinerary"
-                app:layout_constraintBottom_toTopOf="@id/linearLayout"
+                app:layout_constraintBottom_toTopOf="@id/buttonContainer"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_margin="@dimen/_8sdp" />
@@ -115,10 +105,35 @@
                     android:src="@drawable/logo" />
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/buttonContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                app:layout_constraintTop_toBottomOf="@id/recycleSavedPlace"
+                app:layout_constraintBottom_toTopOf="@id/linearLayout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_margin="@dimen/_8sdp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_manual"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onClickSavedPlace"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:text="Manual" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_view_map"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onClickSavedPlace"
+                    android:text="@string/auto"
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_8sdp" />
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView

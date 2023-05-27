@@ -6,6 +6,7 @@
     android:layout_marginBottom="@dimen/_5sdp"
     android:background="@drawable/border_layout"
     android:orientation="horizontal"
+    android:id="@+id/linearLayout_item"
     android:padding="@dimen/_5sdp">
 
     <ImageView
@@ -28,6 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_5sdp"
             android:text="@string/location_name"
+            android:textColor="@color/black"
             android:textSize="@dimen/_15sdp" />
 
         <TextView
@@ -36,6 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:text="@string/location"
+            android:textColor="@color/black"
             android:textSize="@dimen/_10sdp" />
 
         <LinearLayout
@@ -70,13 +73,23 @@
 
             <TextView
                 android:id="@+id/text_view_vote_count"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/_50sdp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:layout_marginBottom="@dimen/_5sdp"
                 android:elevation="@dimen/_5sdp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_8ssp"
                 android:padding="@dimen/_5sdp" />
+            <ImageView
+                android:id="@+id/image_view_delete"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_gravity="end"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:padding="@dimen/_5sdp"
+                android:src="@drawable/ic_close" />
         </LinearLayout>
     </LinearLayout>
 

@@ -5,5 +5,6 @@ data class ResultDistanceAndDuration(
     var end_name: String,
     var duration: String,
     var distance: String,
-    var distanceValue: Int
+    var distanceValue: Int,
+    var durationValue: Int
 )

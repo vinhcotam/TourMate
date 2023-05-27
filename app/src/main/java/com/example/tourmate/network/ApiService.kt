@@ -5,6 +5,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
+import java.util.Date
 
 
 interface ApiService {
@@ -72,7 +73,7 @@ interface ApiService {
     ): Call<List<SavedPlace>>
 
     @GET("recommendRequest.php")
-    fun recommendRequest(@Query("name") name: String): Call<Unit>
+    fun recommendRequest(@Query("english_name") english_name: String): Call<Unit>
 
     @GET("receivedRecommendFromPython.php")
     fun getRecommend(): Call<List<String>>
@@ -93,4 +94,25 @@ interface ApiService {
     @GET("getTop10Location.php")
     fun getTop10Locations(): Call<List<DataLocation>>
 
+    @GET("insertHistoryByUid.php")
+    fun insertHistory(
+        @Query("id") id: Int,
+        @Query("uid") uid: String,
+        @Query("itinerary") itinerary: String,
+        @Query("date") date: String
+    ): Call<ResponseBody>
+    @GET("getHistoryByUid.php")
+    fun getHistoryByUid(
+        @Query("uid") uid: String
+    ): Call<List<History>>
+    @GET("deleteHistoryByUid.php")
+    fun deleteHistory(
+        @Query("uid") uid: String,
+        @Query("id") id: Int
+    ): Call<ResponseBody>
+
+    @GET("deleteSavePlace.php")
+    fun deleteSavedPlace(
+        @Query("uid") uid: String
+    ): Call<ResponseBody>
 }

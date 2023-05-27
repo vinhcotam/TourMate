@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/_5sdp"
     android:background="@drawable/border_layout"
+    android:id="@+id/linearLayout_item"
     android:orientation="horizontal"
     android:padding="@dimen/_5sdp">
 
@@ -27,6 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_5sdp"
             android:text="@string/location_name"
+            android:textColor="@color/black"
             android:textSize="@dimen/_15sdp" />
 
         <TextView
@@ -35,6 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:text="@string/location"
+            android:textColor="@color/black"
             android:textSize="@dimen/_10sdp" />
 
         <LinearLayout
@@ -74,6 +77,7 @@
                 android:layout_marginTop="@dimen/_5sdp"
                 android:layout_marginBottom="@dimen/_5sdp"
                 android:elevation="@dimen/_5sdp"
+                android:textColor="@color/black"
                 android:padding="@dimen/_5sdp" />
         </LinearLayout>
         <TextView

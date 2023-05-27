@@ -11,7 +11,6 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface MapsApiService {
-
     @GET("interpreter")
     fun getNearby(@Query("data") data: String): Call<JsonObject>
     @GET("/maps/api/directions/json")

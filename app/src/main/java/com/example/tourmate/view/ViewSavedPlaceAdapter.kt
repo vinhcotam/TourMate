@@ -3,6 +3,7 @@ package com.example.tourmate.view
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.tourmate.R
@@ -39,9 +40,11 @@ class ViewSavedPlaceAdapter(
             binding.imgLocation.setOnClickListener {
                 listener?.onItemClick(item)
             }
-//            binding.imageViewDelete.setOnClickListener {
-//                listener?.onDeleteItemClick(item)
-//            }
+            binding.imageViewDelete.setOnClickListener {
+                listener?.onDeleteItemClick(item)
+            }
+            binding.linearLayoutItem.startAnimation(AnimationUtils.loadAnimation(itemView.context, R.anim.scale))
+
         }
     }
 

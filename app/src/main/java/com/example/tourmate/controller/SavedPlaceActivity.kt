@@ -27,7 +27,6 @@ import com.example.tourmate.utilities.Constants.Companion.BING_MAP_API_KEY
 import com.example.tourmate.view.ViewSavedPlaceAdapter
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import okhttp3.ResponseBody
@@ -53,6 +52,8 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
     private var currentLongtitude: Double? = 0.0
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var currentLocation: LocationClass? = null
+    private var editList = java.util.ArrayList<ViewSavedPlace>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -72,6 +73,7 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
         savedPlaceList = ArrayList()
         findShortestList = ArrayList()
         locationList = ArrayList()
+        editList = java.util.ArrayList()
         progressDialog = MaterialDialog(this).apply {
             title(text = "Loading")
             message(text = "Please wait...")
@@ -82,9 +84,19 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
 
         viewSavedPlaceAdapter = ViewSavedPlaceAdapter(this, savedPlaceList)
         viewSavedPlaceAdapter.setOnItemClickListener(this)
-        binding.recycleViewSavedPlace.layoutManager = LinearLayoutManager(this)
-        binding.recycleViewSavedPlace.adapter = viewSavedPlaceAdapter
+        binding.recycleSavedPlace.layoutManager = LinearLayoutManager(this)
+        binding.recycleSavedPlace.adapter = viewSavedPlaceAdapter
         getData(auth.uid)
+        editList = ArrayList(savedPlaceList)
+        val iterator = editList.iterator()
+        while (iterator.hasNext()) {
+            val i = iterator.next()
+            if (i.location_id == 0) {
+                currentLatitude = i.latitude.toDouble()
+                currentLongtitude = i.longtitude.toDouble()
+                iterator.remove()
+            }
+        }
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -99,10 +111,10 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
         binding.searchView.setOnCloseListener {
             if (savedPlaceList.isEmpty()) {
                 binding.textViewEmptyNotice.visibility = View.VISIBLE
-                binding.recycleViewSavedPlace.visibility = View.GONE
+                binding.recycleSavedPlace.visibility = View.GONE
             } else {
                 binding.textViewEmptyNotice.visibility = View.GONE
-                binding.recycleViewSavedPlace.visibility = View.VISIBLE
+                binding.recycleSavedPlace.visibility = View.VISIBLE
 
             }
             runOnUiThread {
@@ -111,42 +123,8 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
             }
             true
         }
-        swipeItem()
+
     }
-
-    private fun swipeItem() {
-        val simpleItemTouchCallback = object :
-            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                return false
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.adapterPosition
-                val deleteSavedPlace = savedPlaceList[viewHolder.position]
-                savedPlaceList.removeAt(viewHolder.adapterPosition)
-                viewSavedPlaceAdapter.notifyItemRemoved(viewHolder.adapterPosition)
-                Snackbar.make(
-                    binding.recycleViewSavedPlace,
-                    "Delete " + deleteSavedPlace.english_name,
-                    Snackbar.LENGTH_LONG
-                )
-                    .setAction("Undo", View.OnClickListener {
-                        savedPlaceList.add(position, deleteSavedPlace)
-                        viewSavedPlaceAdapter.notifyItemInserted(position)
-                    }).show()
-
-            }
-        }
-        val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)
-        itemTouchHelper.attachToRecyclerView(binding.recycleViewSavedPlace)
-    }
-
     private fun fetchLocation() {
         val task = fusedLocationClient.lastLocation
         if (ActivityCompat.checkSelfPermission(
@@ -192,16 +170,16 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
             }
             if (filteredList.isEmpty()) {
                 binding.textViewEmptyNotice.visibility = View.VISIBLE
-                binding.recycleViewSavedPlace.visibility = View.GONE
+                binding.recycleSavedPlace.visibility = View.GONE
             } else {
                 binding.textViewEmptyNotice.visibility = View.GONE
-                binding.recycleViewSavedPlace.visibility = View.VISIBLE
+                binding.recycleSavedPlace.visibility = View.VISIBLE
                 viewSavedPlaceAdapter.setFilteredList(filteredList)
 
             }
         } else {
             binding.textViewEmptyNotice.visibility = View.GONE
-            binding.recycleViewSavedPlace.visibility = View.VISIBLE
+            binding.recycleSavedPlace.visibility = View.VISIBLE
             viewSavedPlaceAdapter.setFilteredList(savedPlaceList)
 
         }
@@ -212,10 +190,13 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
         if (uid != null) {
             api.getViewSavedLocationByUid(uid)
                 .enqueue(object : Callback<List<ViewSavedPlace>> {
+
                     override fun onResponse(
                         call: Call<List<ViewSavedPlace>>,
                         response: Response<List<ViewSavedPlace>>
                     ) {
+                        Log.d("Aghg",response.toString())
+
                         if (response.isSuccessful) {
                             savedPlaceList.clear()
                             response.body()?.let {
@@ -239,6 +220,8 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
                         call: Call<List<ViewSavedPlace>>,
                         t: Throwable
                     ) {
+                        Log.d("Aghg",t.toString())
+
                         Toast.makeText(this@SavedPlaceActivity, t.toString(), Toast.LENGTH_LONG)
                             .show()
                         progressDialog?.dismiss()
@@ -467,30 +450,101 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
 
     fun onClickSavedPlace(view: View) {
         when (view) {
-            binding.btnStartItinerary -> {
-                if (savedPlaceList.isNotEmpty()) {
-                    progressDialog = MaterialDialog(this).apply {
-                        title(text = "Loading")
-                        message(text = "Please wait...")
-                        cancelable(false)
-                        show()
-                    }
-                    greedyTravelingSalesman(0, distanceList)
-                    val intent = Intent(this, DisplaySuggestItineraryActivity::class.java)
+            binding.buttonManual->{
+
+                if(binding.buttonManual.text == getString(R.string.refresh)){
+                    val intent = Intent(this, SavedPlaceActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }else{
+                    binding.buttonViewMap.text = getString(R.string.view_on_map)
+                    swipeItem()
+                    binding.buttonManual.text = getString(R.string.refresh)
+                }
+
+
+            }
+            binding.buttonViewMap -> {
+                if (binding.buttonViewMap.text == getString(R.string.view_on_map)){
+                    val currentLocation =
+                        ViewSavedPlace(
+                            0,
+                            "",
+                            0,
+                            "a",
+                            "01",
+                            currentLatitude.toString(),
+                            currentLongtitude.toString(),
+                            "1",
+                            1,
+                            "",
+                            "My Location",
+                            1.0,
+                            2.0
+                        )
+                    savedPlaceList.add(0, currentLocation)
+                    val intent = Intent(this, SuggestedItineraryActivity::class.java)
                     val gson = Gson()
-                    val jsonStringFindShortestList = gson.toJson(findShortestList)
+                    val jsonStringFindShortestList = gson.toJson(savedPlaceList)
                     val jsonStringDistanceList = gson.toJson(distanceList)
                     intent.putExtra("myList", jsonStringFindShortestList)
                     intent.putExtra("distanceList", jsonStringDistanceList)
                     savedPlaceList.clear()
-                    findShortestList.clear()
                     distanceList.clear()
                     startActivity(intent)
                     finish()
+                }else{
+                    if (savedPlaceList.isNotEmpty()) {
+                        progressDialog = MaterialDialog(this).apply {
+                            title(text = "Loading")
+                            message(text = "Please wait...")
+                            cancelable(false)
+                            show()
+                        }
+                        greedyTravelingSalesman(0, distanceList)
+                        val intent = Intent(this, DisplaySuggestItineraryActivity::class.java)
+                        val gson = Gson()
+                        val jsonStringFindShortestList = gson.toJson(findShortestList)
+                        val jsonStringDistanceList = gson.toJson(distanceList)
+                        intent.putExtra("myList", jsonStringFindShortestList)
+                        intent.putExtra("distanceList", jsonStringDistanceList)
+                        savedPlaceList.clear()
+                        findShortestList.clear()
+                        distanceList.clear()
+                        startActivity(intent)
+                        finish()
+                    }
                 }
-
             }
         }
+    }
+
+    private fun swipeItem() {
+        val itemTouchHelper = ItemTouchHelper(object :
+            ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                source: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                val sourcePosition = source.adapterPosition
+                val targetPosition = target.adapterPosition
+                if (sourcePosition < 0 || targetPosition < 0 ||
+                    sourcePosition >= savedPlaceList.size || targetPosition >= savedPlaceList.size
+                ) {
+                    return false
+                }
+                Collections.swap(savedPlaceList, sourcePosition, targetPosition)
+                viewSavedPlaceAdapter.notifyItemMoved(sourcePosition, targetPosition)
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                TODO("Not yet implemented")
+            }
+
+        })
+        itemTouchHelper.attachToRecyclerView(binding.recycleSavedPlace)
     }
 
     private fun greedyTravelingSalesman(startId: Int, distanceList: ArrayList<DistanceClass>) {
@@ -528,7 +582,6 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
                 0,
                 "",
                 0,
-                "My Location",
                 "a",
                 "01",
                 currentLatitude.toString(),

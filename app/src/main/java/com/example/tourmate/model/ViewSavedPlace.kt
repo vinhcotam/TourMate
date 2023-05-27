@@ -7,7 +7,6 @@ data class ViewSavedPlace(
     var saved_place_id: Int,
     var uid: String,
     var location_id: Int,
-    var name: String,
     var location: String,
     var city_id: String,
     var latitude: String,

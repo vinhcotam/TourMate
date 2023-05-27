@@ -87,6 +87,8 @@ class DetailLocationActivity : BaseActivity(), RecyclerLocation0nClickListener {
                     val matchResult = regex.find(stringResponse)
                     val url = matchResult?.groupValues?.get(1)
                     val newStr = url?.removeSuffix("}")
+                    Log.d("HTTP", newStr.toString())
+
                     receivedRecommend(newStr)
                 }
             }
@@ -100,7 +102,7 @@ class DetailLocationActivity : BaseActivity(), RecyclerLocation0nClickListener {
     private fun receivedRecommend(newStr: String?) {
         val client = OkHttpClient()
         val request = Request.Builder()
-            .url("http://192.168.16.105:5001/recommend?url=$newStr")
+            .url("http://192.168.16.110:5001/recommend?url=$newStr")
 
 //            .url("http://192.168.1.5:5001/recommend?url=$newStr")
             .build()
@@ -120,7 +122,7 @@ class DetailLocationActivity : BaseActivity(), RecyclerLocation0nClickListener {
 
                     val results: List<String> =
                         Gson().fromJson(responseBody, Array<String>::class.java).toList()
-                    recommendList.addAll(locationList.filter { it.name in results })
+                    recommendList.addAll(locationList.filter { it.english_name in results })
                     runOnUiThread {
                         dataLocationAdapter.notifyDataSetChanged()
                         binding.textViewTopRecommend.visibility = View.VISIBLE
@@ -208,7 +210,7 @@ class DetailLocationActivity : BaseActivity(), RecyclerLocation0nClickListener {
                                 val voteCount = "(" + it[0].vote_count + ")"
                                 binding.textViewVoteCount.text = voteCount
                                 binding.textViewDescriptionLocation.text = it[0].description
-                                location = it[0].name
+                                location = it[0].english_name
 
                             }
                         }
