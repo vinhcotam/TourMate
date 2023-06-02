@@ -115,4 +115,17 @@ interface ApiService {
     fun deleteSavedPlace(
         @Query("uid") uid: String
     ): Call<ResponseBody>
+
+    @GET("insertDetailHistory.php")
+    fun insertDetailHistory(
+        @Query("id") id: Int,
+        @Query("uid") uid: String,
+        @Query("history_id") history_id: Int,
+        @Query("location_id") location_id: Int
+    ): Call<ResponseBody>
+    @GET("deleteDetailHistory.php")
+    fun deleteDetailHistory(
+        @Query("uid") uid: String,
+        @Query("history_id") history_id: Int
+    ): Call<ResponseBody>
 }

@@ -216,7 +216,7 @@ class MainActivity : BaseActivity(), RecyclerCity0nClickListener,
                 if (response.isSuccessful) {
                     response.body()?.let { it ->
                         dataCityList.clear()
-                        val all = DataCity("0", "All", "All")
+                        val all = DataCity("0", "All")
                         dataCityList.add(all)
                         dataCityList.addAll(it)
                     }

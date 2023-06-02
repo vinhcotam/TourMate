@@ -1,6 +1,7 @@
 package com.example.tourmate.view
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -32,10 +33,15 @@ class HistoryAdapter(
 //            binding.textViewItineraryHistory.text = "Itinerary: ${item.itinerary}"
             val result = item.itinerary.trim().split("-")
             val trimmedArray = result.map { it.trim() }.toTypedArray()
+
             val itineraryList = locationList.filter { trimmedArray.contains(it.english_name) }
-            val reversedList = itineraryList.reversed()
-            val dataLocationAdapter = DataLocationAdapter(context, reversedList)
-            binding.recycleItinerary.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                .sortedBy { trimmedArray.indexOf(it.english_name) }
+            Log.d("Sfdgfhgjhkl1", result.toString())
+
+            Log.d("Sfdgfhgjhkl1", itineraryList.toString())
+            val dataLocationAdapter = DataLocationAdapter(context, itineraryList)
+            binding.recycleItinerary.layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             binding.recycleItinerary.adapter = dataLocationAdapter
             binding.imageViewDelete.setOnClickListener {
                 listener?.onDeleteItemClick(item)
@@ -49,10 +55,11 @@ class HistoryAdapter(
         }
     }
 
-    fun setFilteredList(items: List<History>){
+    fun setFilteredList(items: List<History>) {
         this.items = items
         notifyDataSetChanged()
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(context)
         val binding = ItemHistoryBinding.inflate(inflater, parent, false)

@@ -102,7 +102,7 @@ class DetailLocationActivity : BaseActivity(), RecyclerLocation0nClickListener {
     private fun receivedRecommend(newStr: String?) {
         val client = OkHttpClient()
         val request = Request.Builder()
-            .url("http://192.168.16.110:5001/recommend?url=$newStr")
+            .url("http://192.168.16.115:5001/recommend?url=$newStr")
 
 //            .url("http://192.168.1.5:5001/recommend?url=$newStr")
             .build()

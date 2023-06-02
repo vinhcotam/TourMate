@@ -1,4 +1,4 @@
-package com.example.tourmate.controller
+package com.example.tourmate.controller.broadcastReceiver
 
 import android.app.Dialog
 import android.content.BroadcastReceiver

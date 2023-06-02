@@ -2,14 +2,16 @@ package com.example.tourmate.controller
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tourmate.R
 import com.example.tourmate.base.BaseActivity
+import com.example.tourmate.controller.map.OsmActivity
+import com.example.tourmate.controller.map.SuggestedItineraryActivity
 import com.example.tourmate.databinding.ActivityDisplaySuggestItineraryBinding
 import com.example.tourmate.model.DistanceClass
 import com.example.tourmate.model.ViewSavedPlace
@@ -126,19 +128,52 @@ class DisplaySuggestItineraryActivity : BaseActivity() {
                         2.0
                     )
                     findShortestList.add(0, currentLocation)
-                    val intent = Intent(this, SuggestedItineraryActivity::class.java)
-                    val gson = Gson()
-                    val jsonStringFindShortestList = gson.toJson(findShortestList)
-                    intent.putExtra("myList", jsonStringFindShortestList)
-                    startActivity(intent)
+                    val builder = AlertDialog.Builder(this)
+                    builder.setTitle(getString(R.string.notice))
+                    builder.setMessage(getString(R.string.choose_type_map))
+                    builder.setPositiveButton(getString(R.string.google_map)) { _, _ ->
+                        val intent = Intent(this, SuggestedItineraryActivity::class.java)
+                        val gson = Gson()
+                        val jsonStringFindShortestList = gson.toJson(findShortestList)
+                        intent.putExtra("myList", jsonStringFindShortestList)
+                        startActivity(intent)
+                    }
+                    builder.setNegativeButton(getString(R.string.osm)) { _, _ ->
+                        val intent = Intent(this, OsmActivity::class.java)
+                        val gson = Gson()
+                        val jsonStringFindShortestList = gson.toJson(findShortestList)
+                        val jsonStringDistanceList = gson.toJson(distanceList)
+                        intent.putExtra("distanceList", jsonStringDistanceList)
+                        intent.putExtra("myList", jsonStringFindShortestList)
+                        startActivity(intent)
+                    }
+                    val dialog = builder.create()
+                    dialog.show()
                 } else {
-                    val intent = Intent(this, SuggestedItineraryActivity::class.java)
-                    val gson = Gson()
-                    val jsonStringFindShortestList = gson.toJson(suggestList)
-                    val jsonStringDistanceList = gson.toJson(distanceList)
-                    intent.putExtra("myList", jsonStringFindShortestList)
-                    intent.putExtra("distanceList", jsonStringDistanceList)
-                    startActivity(intent)
+                    val builder = AlertDialog.Builder(this)
+                    builder.setTitle(getString(R.string.notice))
+                    builder.setMessage(getString(R.string.choose_type_map))
+                    builder.setPositiveButton(getString(R.string.google_map)) { _, _ ->
+                        val intent = Intent(this, SuggestedItineraryActivity::class.java)
+                        val gson = Gson()
+                        val jsonStringFindShortestList = gson.toJson(suggestList)
+                        val jsonStringDistanceList = gson.toJson(distanceList)
+                        intent.putExtra("myList", jsonStringFindShortestList)
+                        intent.putExtra("distanceList", jsonStringDistanceList)
+                        startActivity(intent)
+                    }
+                    builder.setNegativeButton(getString(R.string.osm)) { _, _ ->
+                        val intent = Intent(this, OsmActivity::class.java)
+                        val gson = Gson()
+                        val jsonStringFindShortestList = gson.toJson(suggestList)
+                        val jsonStringDistanceList = gson.toJson(distanceList)
+                        intent.putExtra("myList", jsonStringFindShortestList)
+                        intent.putExtra("distanceList", jsonStringDistanceList)
+                        startActivity(intent)
+                    }
+                    val dialog = builder.create()
+                    dialog.show()
+
                 }
 
             }

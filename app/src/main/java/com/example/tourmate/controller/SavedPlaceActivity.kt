@@ -1,5 +1,6 @@
 package com.example.tourmate.controller
 
+import com.example.tourmate.controller.map.OsmActivity
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -19,6 +20,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.example.tourmate.R
 import com.example.tourmate.base.BaseActivity
 import com.example.tourmate.controller.interfaces.RecyclerSavedPlaceOnClickListener
+import com.example.tourmate.controller.map.SuggestedItineraryActivity
 import com.example.tourmate.databinding.ActivitySavedPlaceBinding
 import com.example.tourmate.model.*
 import com.example.tourmate.network.MapsApiService
@@ -460,6 +462,7 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
                     binding.buttonViewMap.text = getString(R.string.view_on_map)
                     swipeItem()
                     binding.buttonManual.text = getString(R.string.refresh)
+
                 }
 
 
@@ -482,17 +485,38 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
                             1.0,
                             2.0
                         )
-                    savedPlaceList.add(0, currentLocation)
-                    val intent = Intent(this, SuggestedItineraryActivity::class.java)
-                    val gson = Gson()
-                    val jsonStringFindShortestList = gson.toJson(savedPlaceList)
-                    val jsonStringDistanceList = gson.toJson(distanceList)
-                    intent.putExtra("myList", jsonStringFindShortestList)
-                    intent.putExtra("distanceList", jsonStringDistanceList)
-                    savedPlaceList.clear()
-                    distanceList.clear()
-                    startActivity(intent)
-                    finish()
+                    val builder = AlertDialog.Builder(this)
+                    builder.setTitle(getString(R.string.notice))
+                    builder.setMessage(getString(R.string.choose_type_map))
+                    builder.setPositiveButton(getString(R.string.google_map)) { _, _ ->
+                        savedPlaceList.add(0, currentLocation)
+                        val intent = Intent(this, SuggestedItineraryActivity::class.java)
+                        val gson = Gson()
+                        val jsonStringFindShortestList = gson.toJson(savedPlaceList)
+                        val jsonStringDistanceList = gson.toJson(distanceList)
+                        intent.putExtra("myList", jsonStringFindShortestList)
+                        intent.putExtra("distanceList", jsonStringDistanceList)
+                        savedPlaceList.clear()
+                        distanceList.clear()
+                        startActivity(intent)
+                        finish()
+                    }
+                    builder.setNegativeButton(getString(R.string.osm)) { _, _ ->
+                        savedPlaceList.add(0, currentLocation)
+                        val intent = Intent(this, OsmActivity::class.java)
+                        val gson = Gson()
+                        val jsonStringFindShortestList = gson.toJson(savedPlaceList)
+                        val jsonStringDistanceList = gson.toJson(distanceList)
+                        intent.putExtra("myList", jsonStringFindShortestList)
+                        intent.putExtra("distanceList", jsonStringDistanceList)
+                        savedPlaceList.clear()
+                        distanceList.clear()
+                        startActivity(intent)
+                        finish()
+                    }
+                    val dialog = builder.create()
+                    dialog.show()
+
                 }else{
                     if (savedPlaceList.isNotEmpty()) {
                         progressDialog = MaterialDialog(this).apply {

@@ -19,11 +19,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TourMate"
         android:usesCleartextTraffic="true"
+        tools:replace="android:allowBackup"
         tools:targetApi="31">
         <activity
+            android:name=".controller.map.OsmActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".controller.MyHistoryActivity"
-            android:screenOrientation="portrait"
-            android:exported="false">
+            android:exported="false"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -37,7 +46,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".controller.SuggestedItineraryActivity"
+            android:name=".controller.map.SuggestedItineraryActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <meta-data
@@ -45,7 +54,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".controller.NearbyActivity"
+            android:name=".controller.map.NearbyActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <meta-data

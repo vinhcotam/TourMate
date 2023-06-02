@@ -10,6 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.tourmate.R
 import com.example.tourmate.controller.*
 import com.example.tourmate.controller.MyHistoryActivity
+import com.example.tourmate.controller.broadcastReceiver.LocationBroadcastReceiver
+import com.example.tourmate.controller.broadcastReceiver.NetworkChangeReceiver
+import com.example.tourmate.controller.map.NearbyActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 

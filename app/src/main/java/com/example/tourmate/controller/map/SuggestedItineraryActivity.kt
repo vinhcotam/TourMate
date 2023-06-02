@@ -1,6 +1,8 @@
-package com.example.tourmate.controller
+package com.example.tourmate.controller.map
 
 import android.Manifest
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -9,7 +11,6 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.afollestad.materialdialogs.MaterialDialog
 import com.example.tourmate.R
 import com.example.tourmate.base.BaseActivity
 import com.example.tourmate.databinding.ActivitySuggestedItineraryBinding
@@ -98,12 +99,10 @@ class SuggestedItineraryActivity : BaseActivity(), OnMapReadyCallback {
     override fun onMapReady(p0: GoogleMap) {
         googleMap = p0
         var position = 0
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
+        if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                 this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             return
@@ -188,9 +187,8 @@ class SuggestedItineraryActivity : BaseActivity(), OnMapReadyCallback {
                                 sortedList.add(currentResult!!)
                                 currentStartName = currentResult.end_name
                             }
-                            var totalDistance = 0
 
-                            Log.d("tottttt", totalDistance.toString())
+                            Log.d("tottttt", sortedList.toString())
                             resultDistanceAndDurationAdapter =
                                 ResultDistanceAndDurationAdapter(sortedList)
                             binding.recycleViewResult.layoutManager =
@@ -199,10 +197,10 @@ class SuggestedItineraryActivity : BaseActivity(), OnMapReadyCallback {
                                     LinearLayoutManager.HORIZONTAL,
                                     false
                                 )
-                            val randomColor = randomColor()
+//                            val randomColor = randomColor()
                             binding.recycleViewResult.adapter = resultDistanceAndDurationAdapter
                             val polylineOptions = PolylineOptions()
-                                .color((randomColor))
+                                .color((getColor(R.color.dark_blue)))
                                 .width(15f)
                             for (step in route.legs[0].steps) {
                                 val points = PolyUtil.decode(step.polyline.points)

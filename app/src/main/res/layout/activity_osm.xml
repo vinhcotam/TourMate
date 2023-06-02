@@ -4,7 +4,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".controller.map.NearbyActivity">
+    tools:context=".controller.map.OsmActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,12 +30,18 @@
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <fragment
-                android:id="@+id/direction_fragment"
-                android:name="com.google.android.gms.maps.SupportMapFragment"
+            <org.osmdroid.views.MapView
+                android:id="@+id/mapView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context=".controller.map.SuggestedItineraryActivity" />
+                android:layout_height="match_parent" />
+            <ImageButton
+                android:id="@+id/locationButton"
+                android:onClick="osmButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="@drawable/ic_menu_mylocation"
+                android:layout_gravity="bottom|end" />
 
         </FrameLayout>
 
@@ -53,7 +59,7 @@
             android:layout_width="match_parent"
             android:id="@+id/button_save_plan"
             android:text="@string/save_plan"
-            android:onClick="savePlan"
+            android:onClick="osmButton"
             android:layout_height="wrap_content"/>
     </LinearLayout>
 

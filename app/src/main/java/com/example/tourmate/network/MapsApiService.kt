@@ -2,12 +2,9 @@ package com.example.tourmate.network
 
 import com.example.tourmate.model.DirectionsResponse
 import com.example.tourmate.model.DistanceMatrixResponse
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface MapsApiService {
@@ -26,5 +23,6 @@ interface MapsApiService {
         @Query("travelMode") travelMode: String,
         @Query("key") key: String
     ): Call<DistanceMatrixResponse>
+
 }
 

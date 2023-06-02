@@ -211,7 +211,7 @@ class MyHistoryActivity : BaseActivity(), RecyclerHistoryOnClickListener {
         builder.setTitle(getString(R.string.notice))
         builder.setMessage(getString(R.string.delete_favorite_location))
         builder.setPositiveButton(getString(R.string.yes)) { _, _ ->
-            deleteHistory(history)
+            deleteDetailHistory(history)
         }
         builder.setNegativeButton(getString(R.string.no)) { dialog, _ ->
             dialog.dismiss()
@@ -231,6 +231,7 @@ class MyHistoryActivity : BaseActivity(), RecyclerHistoryOnClickListener {
                 call: Call<ResponseBody>,
                 response: Response<ResponseBody>
             ) {
+                Log.d("ảdfg",response.toString())
                 if (response.isSuccessful) {
                     val responseData = response.body()?.string()
                     if (responseData != null && responseData == "success") {
@@ -279,6 +280,67 @@ class MyHistoryActivity : BaseActivity(), RecyclerHistoryOnClickListener {
             }
         })
     }
+
+    private fun deleteDetailHistory(history: History) {
+        val api = RetrofitInstance.api
+        val call = api.deleteDetailHistory(
+            uid = auth.uid ?: "",
+            history_id = history.id
+        )
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(
+                call: Call<ResponseBody>,
+                response: Response<ResponseBody>
+            ) {
+                if (response.isSuccessful) {
+                    val responseData = response.body()?.string()
+                    if (responseData != null && responseData == "success") {
+                        Toast.makeText(
+                            this@MyHistoryActivity,
+                            getString(R.string.success),
+                            Toast.LENGTH_LONG
+                        ).show()
+                        getData(auth.uid)
+                        deleteHistory(history)
+                    } else {
+                        Toast.makeText(
+                            this@MyHistoryActivity,
+                            getString(R.string.fail),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                } else {
+                    val error = Gson().fromJson(
+                        response.errorBody()?.string(),
+                        ErrorResponse::class.java
+                    )
+                    val errorMessage = error?.message ?: getString(R.string.unknown_error)
+                    Toast.makeText(
+                        this@MyHistoryActivity,
+                        errorMessage,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                if (t is IOException) {
+                    Toast.makeText(
+                        this@MyHistoryActivity,
+                        getString(R.string.cant_connect_to_server),
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
+                    Toast.makeText(
+                        this@MyHistoryActivity,
+                        getString(R.string.unknown_error),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        })
+    }
+
     override fun onStop() {
         super.onStop()
         myJob?.cancel()

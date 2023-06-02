@@ -14,7 +14,23 @@
       },
       "oauth_client": [
         {
-          "client_id": "20861489216-jrjpqo36dn9l4sgucc7soqrt6jrl1i1c.apps.googleusercontent.com",
+          "client_id": "20861489216-dbc511damjq5i1m0k5k1ccqa42ulu1om.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tourmate",
+            "certificate_hash": "9b7682cc61c8e1c321061f658f448d71a2a30c38"
+          }
+        },
+        {
+          "client_id": "20861489216-f00co2ime5bodqupv5ggdsct5u2ftsg5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tourmate",
+            "certificate_hash": "7ffa0e56dfe5be7a7cd83dee9a47df938c56af0a"
+          }
+        },
+        {
+          "client_id": "20861489216-l9foti800ev28ld8pldiu9end75fd0ss.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

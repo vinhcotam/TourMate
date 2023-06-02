@@ -1,7 +1,5 @@
 package com.example.tourmate.model
 
-import java.io.Serializable
-import kotlin.properties.Delegates
 
 data class ViewSavedPlace(
     var saved_place_id: Int,

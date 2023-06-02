@@ -1,4 +1,4 @@
-package com.example.tourmate.controller
+package com.example.tourmate.controller.map
 
 import android.Manifest
 import android.content.Context
