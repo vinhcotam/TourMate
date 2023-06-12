@@ -158,7 +158,7 @@ class OsmActivity : BaseActivity() {
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             marker.title = i.english_name
             binding.mapView.overlays.add(marker)
-            Log.d("marerrrr", marker.position.toString())
+            Log.d("marerrrr", marker.title.toString())
         }
 
         val polyline = Polyline()
@@ -323,6 +323,7 @@ class OsmActivity : BaseActivity() {
         when (view) {
             binding.buttonSavePlan -> {
                 insertHistory()
+                binding.buttonSavePlan.isEnabled = false
             }
             binding.locationButton -> {
                 fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)

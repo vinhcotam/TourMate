@@ -335,6 +335,8 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
                 call: Call<DistanceMatrixResponse>,
                 response: Response<DistanceMatrixResponse>
             ) {
+                Log.d("saddđ", response.toString())
+
                 if (response.isSuccessful) {
                     val distanceInMeters =
                         response.body()?.resourceSets?.get(0)?.resources?.get(0)?.results?.get(
@@ -419,6 +421,7 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
                         call: Call<List<DistanceClass>>,
                         response: Response<List<DistanceClass>>
                     ) {
+                        Log.d("saddđ", response.toString())
                         if (response.isSuccessful) {
                             if (response.body()?.isEmpty() == true) {
                                 insertDistance(locationList[i], locationList[j])

@@ -247,6 +247,7 @@ class SuggestedItineraryActivity : BaseActivity(), OnMapReadyCallback {
         when (view) {
             binding.buttonSavePlan -> {
                 insertHistory()
+                binding.buttonSavePlan.isEnabled = false
             }
         }
     }
@@ -288,6 +289,8 @@ class SuggestedItineraryActivity : BaseActivity(), OnMapReadyCallback {
                             getString(R.string.success),
                             Toast.LENGTH_LONG
                         ).show()
+                        insertDetailHistory(randomNumber, suggestList)
+
                         deleteSavePlace()
                     } else {
                         Toast.makeText(
@@ -328,6 +331,80 @@ class SuggestedItineraryActivity : BaseActivity(), OnMapReadyCallback {
 
         })
     }
+    private fun insertDetailHistory(randomNumber: Int, suggestList: ArrayList<ViewSavedPlace>) {
+        Log.d("Dafgh", randomNumber.toString())
+
+        for (i in 1 until  suggestList.size){
+            var randomNumberDetail = Random.nextInt(0, 10000)
+            Log.d("Dafgh", suggestList[i].location_id.toString())
+
+            val api = RetrofitInstance.api
+            val call = api.insertDetailHistory(
+                id = randomNumberDetail,
+                uid = auth.uid ?: "",
+                history_id = randomNumber,
+                location_id = suggestList[i].location_id
+            )
+            call.enqueue(object: Callback<ResponseBody>{
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.isSuccessful) {
+                        Log.d("Dafgh", response.toString())
+                        val responseData = response.body()?.string()
+                        if (responseData != null && responseData == "success") {
+                            Log.d("Dafgh", getString(R.string.success))
+
+//                            Toast.makeText(
+//                                this@OsmActivity,
+//                                getString(R.string.success),
+//                                Toast.LENGTH_LONG
+//                            ).show()
+                        } else {
+                            Log.d("Dafgh", getString(R.string.fail))
+//
+//                            Toast.makeText(
+//                                this@OsmActivity,
+//                                getString(R.string.fail),
+//                                Toast.LENGTH_LONG
+//                            ).show()
+                        }
+                    } else {
+                        val error = Gson().fromJson(
+                            response.errorBody()?.string(),
+                            ErrorResponse::class.java
+                        )
+                        val errorMessage = error?.message ?: getString(R.string.unknown_error)
+                        Toast.makeText(
+                            this@SuggestedItineraryActivity,
+                            errorMessage,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    if (t is IOException) {
+                        Toast.makeText(
+                            this@SuggestedItineraryActivity,
+                            getString(R.string.cant_connect_to_server),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            this@SuggestedItineraryActivity,
+                            getString(R.string.unknown_error),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+
+            })
+        }
+
+    }
+
     fun deleteSavePlace(){
         val api = RetrofitInstance.api
         val call = api.deleteSavedPlace(
