@@ -197,7 +197,6 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
                         call: Call<List<ViewSavedPlace>>,
                         response: Response<List<ViewSavedPlace>>
                     ) {
-                        Log.d("Aghg",response.toString())
 
                         if (response.isSuccessful) {
                             savedPlaceList.clear()
@@ -222,7 +221,6 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
                         call: Call<List<ViewSavedPlace>>,
                         t: Throwable
                     ) {
-                        Log.d("Aghg",t.toString())
 
                         Toast.makeText(this@SavedPlaceActivity, t.toString(), Toast.LENGTH_LONG)
                             .show()
@@ -335,7 +333,6 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
                 call: Call<DistanceMatrixResponse>,
                 response: Response<DistanceMatrixResponse>
             ) {
-                Log.d("saddđ", response.toString())
 
                 if (response.isSuccessful) {
                     val distanceInMeters =
@@ -421,7 +418,6 @@ class SavedPlaceActivity : BaseActivity(), RecyclerSavedPlaceOnClickListener {
                         call: Call<List<DistanceClass>>,
                         response: Response<List<DistanceClass>>
                     ) {
-                        Log.d("saddđ", response.toString())
                         if (response.isSuccessful) {
                             if (response.body()?.isEmpty() == true) {
                                 insertDistance(locationList[i], locationList[j])

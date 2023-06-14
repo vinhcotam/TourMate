@@ -32,7 +32,6 @@ import okhttp3.Request
 import okhttp3.ResponseBody
 import org.json.JSONException
 import org.json.JSONObject
-import org.osgeo.proj4j.*
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -116,10 +115,8 @@ class OsmActivity : BaseActivity() {
                 .addOnSuccessListener { location: Location? ->
                     if (location != null) {
                         val currentLocation = GeoPoint(location.latitude, location.longitude)
-                        val currentCoordinate =
-                            convertCoordinates(currentLocation.latitude, currentLocation.longitude)
                         val currentMarker = Marker(binding.mapView)
-                        currentMarker.position = currentCoordinate
+                        currentMarker.position = currentLocation
                         currentMarker.title = "Your Location"
                         binding.mapView.overlays.add(currentMarker)
                         val locations = suggestList.map { savedPlace ->
@@ -148,8 +145,8 @@ class OsmActivity : BaseActivity() {
     }
 
     private fun drawRouteAndMarkers(waypoints: List<GeoPoint>) {
+
         for (i in suggestList) {
-            val coordinate = convertCoordinates(i.latitude.toDouble(), i.longtitude.toDouble())
 
             val marker = Marker(binding.mapView)
 //            marker.position = coordinate
@@ -168,6 +165,9 @@ class OsmActivity : BaseActivity() {
         binding.mapView.overlays.add(polyline)
 
         GlobalScope.launch(Dispatchers.Main) {
+            var totalDurationValue = 0L
+            var totalDistanceValue = 0.0
+            var totalAverageHour = 0.0
             for (i in 0 until suggestList.size - 1) {
                 val startLocation = GeoPoint(
                     suggestList[i].latitude.toDouble(),
@@ -179,16 +179,34 @@ class OsmActivity : BaseActivity() {
                 )
                 val time = getTimeBetweenLocations(startLocation, endLocation)
                 val distance = getDistanceBetweenLocations(startLocation, endLocation)
+                val durationValue = parseDurationValue(time)
+                val distanceValue = getDistanceValue(distance)
+
+                totalDurationValue += durationValue
+                totalDistanceValue += distanceValue
+                val averageHour = (suggestList[i].min_hour + suggestList[i].max_hour) / 2
+                totalAverageHour += averageHour
                 val result = ResultDistanceAndDuration(
                     start_name = suggestList[i].english_name,
                     end_name = suggestList[i + 1].english_name,
                     duration = time,
                     distance = distance,
-                    distanceValue = 0,
-                    durationValue = 0
+                    distanceValue = distanceValue.toInt(),
+                    durationValue = durationValue.toInt()
                 )
                 resultList.add(result)
             }
+
+            val totalResult = ResultDistanceAndDuration(
+                start_name = suggestList[0].english_name,
+                end_name = suggestList.last().english_name,
+                duration = formatDuration(totalDurationValue + totalAverageHour),
+                distance = formatDistance(totalDistanceValue),
+                distanceValue = totalDistanceValue.toInt(),
+                durationValue = totalDurationValue.toInt()
+            )
+
+            resultList.add(totalResult)
 
             resultDistanceAndDurationAdapter.notifyDataSetChanged()
 
@@ -196,6 +214,36 @@ class OsmActivity : BaseActivity() {
             binding.mapView.invalidate()
 
         }
+    }
+    private fun formatDuration(duration: Double): String {
+        val hours = duration / 60
+        val minutes = duration % 60
+
+        return "${hours.roundToLong()} hours ${minutes.roundToLong()} minutes"
+    }
+
+    private fun formatDistance(distance: Double): String {
+        return String.format("%.2f km", distance)
+    }
+    private fun parseDurationValue(duration: String): Long {
+        val pattern = "([0-9]+)\\s*(hour|minute)s?".toRegex()
+        val matchResult = pattern.find(duration)
+        return matchResult?.let { result ->
+            val (value, unit) = result.destructured
+            when (unit) {
+                "hour" -> value.toLong() * 60
+                "minute" -> value.toLong()
+                else -> 0
+            }
+        } ?: 0
+    }
+    private fun getDistanceValue(distance: String): Double {
+        val pattern = "([0-9.]+)\\s*km".toRegex()
+        val matchResult = pattern.find(distance)
+        return matchResult?.let { result ->
+            val (value) = result.destructured
+            value.toDoubleOrNull() ?: 0.0
+        } ?: 0.0
     }
 
     private suspend fun getTimeBetweenLocations(
@@ -226,7 +274,26 @@ class OsmActivity : BaseActivity() {
                             val leg = legs.getJSONObject(0)
                             val durationValue = leg.getDouble("duration")
                             val durationInMinutes = (durationValue / 60).roundToLong()
-                            return@withContext "$durationInMinutes minutes"
+                            val hours = durationInMinutes / 60
+                            val minutes = durationInMinutes % 60
+                            val days = hours / 24
+                            val remainingHours = hours % 24
+
+                            val result = StringBuilder()
+
+                            if (days > 0) {
+                                result.append("$days day(s) ")
+                            }
+
+                            if (remainingHours > 0) {
+                                result.append("$remainingHours hour(s) ")
+                            }
+
+                            if (minutes > 0) {
+                                result.append("$minutes minute(s)")
+                            }
+
+                            return@withContext result.toString()
                         }
                     }
                 }
@@ -282,26 +349,6 @@ class OsmActivity : BaseActivity() {
     }
 
 
-    private fun convertCoordinates(lat: Double, lon: Double): GeoPoint {
-        val crsFactory = CRSFactory()
-        val fromCRS: CoordinateReferenceSystem = crsFactory.createFromName("EPSG:4326")
-        val toCRS: CoordinateReferenceSystem = crsFactory.createFromName("EPSG:3857")
-
-        val transformFactory = CoordinateTransformFactory()
-        val forwardTransform = transformFactory.createTransform(fromCRS, toCRS)
-        val inverseTransform = transformFactory.createTransform(toCRS, fromCRS)
-        val sourceCoord = ProjCoordinate(lon, lat)
-        val targetCoord = ProjCoordinate()
-
-        forwardTransform.transform(sourceCoord, targetCoord)
-
-        val clampedLon = targetCoord.y.coerceIn(-180.0, 180.0)
-        val clampedLat = targetCoord.x.coerceIn(-85.05112877980658, 85.05112877980658)
-
-        return GeoPoint(clampedLat, clampedLon)
-
-    }
-
 
 
 
@@ -340,7 +387,8 @@ class OsmActivity : BaseActivity() {
                 fusedLocationClient.lastLocation
                     .addOnSuccessListener { location: Location? ->
                         if (location != null) {
-                            val currentLocation = GeoPoint(location.latitude, location.longitude)
+                            val currentLocation =
+                                GeoPoint(location.latitude, location.longitude)
                             binding.mapView.controller.setCenter(currentLocation)
                             binding.mapView.controller.setZoom(15.0)
                         }
@@ -429,7 +477,7 @@ class OsmActivity : BaseActivity() {
     private fun insertDetailHistory(randomNumber: Int, suggestList: ArrayList<ViewSavedPlace>) {
         Log.d("Dafgh", randomNumber.toString())
 
-        for (i in 1 until  suggestList.size){
+        for (i in 1 until suggestList.size) {
             var randomNumberDetail = Random.nextInt(0, 10000)
             Log.d("Dafgh", suggestList[i].location_id.toString())
 
@@ -440,7 +488,7 @@ class OsmActivity : BaseActivity() {
                 history_id = randomNumber,
                 location_id = suggestList[i].location_id
             )
-            call.enqueue(object: Callback<ResponseBody>{
+            call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>

@@ -194,6 +194,11 @@ class NearbyActivity : BaseActivity(), OnMapReadyCallback {
                                 getString(R.string.no_data_found),
                                 Toast.LENGTH_LONG
                             ).show()
+                            map?.clear()
+                            map?.addMarker(
+                                MarkerOptions()
+                                    .position(LatLng(currentLocation!!.latitude, currentLocation!!.longitude))
+                            )
                             progressDialog?.dismiss()
                         }
                     }

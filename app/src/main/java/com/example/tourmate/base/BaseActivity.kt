@@ -6,7 +6,9 @@ import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
 import com.example.tourmate.R
 import com.example.tourmate.controller.*
 import com.example.tourmate.controller.MyHistoryActivity
@@ -52,6 +54,25 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             unregisterReceiver(locationBroadcastReceiver)
         }
     }
+
+    override fun onBackPressed() {
+        if (isTaskRoot) {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(getString(R.string.exit_confirm))
+            builder.setMessage(getString(R.string.confirm))
+            builder.setPositiveButton(getString(R.string.exit)) { _, _ ->
+                finish()
+            }
+            builder.setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            val dialog = builder.create()
+            dialog.show()
+        } else {
+            super.onBackPressed()
+        }
+    }
+
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {

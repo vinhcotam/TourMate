@@ -102,9 +102,9 @@ class DetailLocationActivity : BaseActivity(), RecyclerLocation0nClickListener {
     private fun receivedRecommend(newStr: String?) {
         val client = OkHttpClient()
         val request = Request.Builder()
-            .url("http://192.168.16.115:5001/recommend?url=$newStr")
+//            .url("http://192.168.16.106:5001/recommend?url=$newStr")
 
-//            .url("http://192.168.1.5:5001/recommend?url=$newStr")
+            .url("http://192.168.1.5:5001/recommend?url=$newStr")
             .build()
         client.newCall(request).enqueue(object : okhttp3.Callback {
             override fun onFailure(call: okhttp3.Call, e: IOException) {

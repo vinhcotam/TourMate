@@ -16,7 +16,6 @@ import com.example.tourmate.databinding.ActivityMyHistoryBinding
 import com.example.tourmate.model.DataLocation
 import com.example.tourmate.model.ErrorResponse
 import com.example.tourmate.model.History
-import com.example.tourmate.model.ViewSavedPlace
 import com.example.tourmate.network.RetrofitInstance
 import com.example.tourmate.view.DataLocationAdapter
 import com.example.tourmate.view.HistoryAdapter

@@ -50,12 +50,10 @@ class DataLocationAdapter(private val context: Context, private var items: List<
         val binding = ItemDataLocationBinding.inflate(inflater, parent, false)
         return ViewHolder(binding)
     }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
         holder.bind(item,context, mListener)
     }
-
     override fun getItemCount(): Int {
         return items.size
     }

@@ -5,7 +5,6 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
-import java.util.Date
 
 
 interface ApiService {
@@ -17,7 +16,6 @@ interface ApiService {
 
     @GET("getDataCity.php")
     fun getDataCity(): Call<List<DataCity>>
-
 
     @GET("getDetailLocationById.php")
     fun getDetailLocationById(@Query("id") id: Int): Call<List<DataLocation>>
